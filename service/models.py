@@ -5,29 +5,45 @@ All of the models are stored in this module
 """
 import logging
 from flask_sqlalchemy import SQLAlchemy
+from datetime import date
 
 logger = logging.getLogger("flask.app")
 
 # Create the SQLAlchemy object to be initialized later in init_db()
 db = SQLAlchemy()
 
+class Gender(Enum):
+    """Enumeration of valid Pet Genders"""
+
+    MALE = 0
+    FEMALE = 1
+    UNKNOWN = 3
+
 
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
 
 
-class YourResourceModel(db.Model):
+class Customer(db.Model):
     """
-    Class that represents a YourResourceModel
+    Class that represents Customers
     """
 
     ##################################################
     # Table Schema
     ##################################################
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(63))
+    first_name = db.Column(db.String(63), nullable = False)
+    last_name = db.Column(db.String(63), nullable = False)
+    gender = db.Column(
+        db.Enum(Gender), nullable=False, server_default=(Gender.UNKNOWN.name)
+    )
+    birthday = db.Column(db.Date(), nullable=False, default=date.today())
+    active = db.Column(db.boolean(), nullable = False, default = False)
+    address = db.column(db.string(63), nullable = False)
 
-    # Todo: Place the rest of your schema here...
+
+
 
     def __repr__(self):
         return f"<YourResourceModel {self.name} id=[{self.id}]>"
