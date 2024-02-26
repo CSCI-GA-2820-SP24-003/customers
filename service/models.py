@@ -3,17 +3,21 @@ Models for YourResourceModel
 
 All of the models are stored in this module
 """
+
 import logging
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
+from enum import Enum
+
 
 logger = logging.getLogger("flask.app")
 
 # Create the SQLAlchemy object to be initialized later in init_db()
 db = SQLAlchemy()
 
+
 class Gender(Enum):
-    """Enumeration of valid Pet Genders"""
+    """Enumeration of valid Genders"""
 
     MALE = 0
     FEMALE = 1
@@ -21,7 +25,7 @@ class Gender(Enum):
 
 
 class DataValidationError(Exception):
-    """ Used for an data validation errors when deserializing """
+    """Used for an data validation errors when deserializing"""
 
 
 class Customer(db.Model):
@@ -33,17 +37,14 @@ class Customer(db.Model):
     # Table Schema
     ##################################################
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(63), nullable = False)
-    last_name = db.Column(db.String(63), nullable = False)
+    first_name = db.Column(db.String(63), nullable=False)
+    last_name = db.Column(db.String(63), nullable=False)
     gender = db.Column(
         db.Enum(Gender), nullable=False, server_default=(Gender.UNKNOWN.name)
     )
     birthday = db.Column(db.Date(), nullable=False, default=date.today())
-    active = db.Column(db.boolean(), nullable = False, default = False)
-    address = db.column(db.string(63), nullable = False)
-
-
-
+    active = db.Column(db.Boolean(), nullable=False, default=False)
+    address = db.Column(db.String(63), nullable=False)
 
     def __repr__(self):
         return f"<YourResourceModel {self.name} id=[{self.id}]>"
@@ -75,7 +76,7 @@ class Customer(db.Model):
             raise DataValidationError(e) from e
 
     def delete(self):
-        """ Removes a YourResourceModel from the data store """
+        """Removes a YourResourceModel from the data store"""
         logger.info("Deleting %s", self.name)
         try:
             db.session.delete(self)
@@ -86,7 +87,7 @@ class Customer(db.Model):
             raise DataValidationError(e) from e
 
     def serialize(self):
-        """ Serializes a YourResourceModel into a dictionary """
+        """Serializes a YourResourceModel into a dictionary"""
         return {"id": self.id, "name": self.name}
 
     def deserialize(self, data):
@@ -106,7 +107,8 @@ class Customer(db.Model):
             ) from error
         except TypeError as error:
             raise DataValidationError(
-                "Invalid YourResourceModel: body of request contained bad or no data " + str(error)
+                "Invalid YourResourceModel: body of request contained bad or no data "
+                + str(error)
             ) from error
         return self
 
@@ -116,13 +118,13 @@ class Customer(db.Model):
 
     @classmethod
     def all(cls):
-        """ Returns all of the YourResourceModels in the database """
+        """Returns all of the YourResourceModels in the database"""
         logger.info("Processing all YourResourceModels")
         return cls.query.all()
 
     @classmethod
     def find(cls, by_id):
-        """ Finds a YourResourceModel by it's ID """
+        """Finds a YourResourceModel by it's ID"""
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
 
