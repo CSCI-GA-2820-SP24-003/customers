@@ -37,14 +37,16 @@ class Customer(db.Model):
     # Table Schema
     ##################################################
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20))
+    password = db.Column(db.String(30), nullable=False)
     first_name = db.Column(db.String(63), nullable=False)
     last_name = db.Column(db.String(63), nullable=False)
     gender = db.Column(
         db.Enum(Gender), nullable=False, server_default=(Gender.UNKNOWN.name)
     )
-    birthday = db.Column(db.Date(), nullable=False, default=date.today())
     active = db.Column(db.Boolean(), nullable=False, default=False)
     address = db.Column(db.String(63), nullable=False)
+    email = db.Column(db.String(63), nullable=False)
 
     def __repr__(self):
         return f"<YourResourceModel {self.name} id=[{self.id}]>"
@@ -98,7 +100,7 @@ class Customer(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.name = data["name"]
+            self.customer = data["name"]
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0]) from error
         except KeyError as error:
