@@ -6,7 +6,6 @@ All of the models are stored in this module
 
 import logging
 from flask_sqlalchemy import SQLAlchemy
-from datetime import date
 from enum import Enum
 
 
@@ -49,13 +48,13 @@ class Customer(db.Model):
     email = db.Column(db.String(63), nullable=False)
 
     def __repr__(self):
-        return f"<YourResourceModel {self.name} id=[{self.id}]>"
+        return f"<Customer {self.first_name, self.last_name} id=[{self.id}]>"
 
     def create(self):
         """
-        Creates a YourResourceModel to the database
+        Creates a Customer to the database
         """
-        logger.info("Creating %s", self.name)
+        logger.info("Creating %s", self.first_name)
         self.id = None  # pylint: disable=invalid-name
         try:
             db.session.add(self)
@@ -67,9 +66,11 @@ class Customer(db.Model):
 
     def update(self):
         """
-        Updates a YourResourceModel to the database
+        Updates a Customer to the database
         """
-        logger.info("Saving %s", self.name)
+        logger.info("Saving %s", self.first_name)
+        if self.id is None:
+            raise DataValidationError("There is no valid ID Specified")
         try:
             db.session.commit()
         except Exception as e:
@@ -78,8 +79,8 @@ class Customer(db.Model):
             raise DataValidationError(e) from e
 
     def delete(self):
-        """Removes a YourResourceModel from the data store"""
-        logger.info("Deleting %s", self.name)
+        """Removes a Customer from the data store"""
+        logger.info("Deleting %s", self.first_name)
         try:
             db.session.delete(self)
             db.session.commit()
@@ -89,27 +90,50 @@ class Customer(db.Model):
             raise DataValidationError(e) from e
 
     def serialize(self):
-        """Serializes a YourResourceModel into a dictionary"""
-        return {"id": self.id, "name": self.name}
+        """Serializes a Customer into a dictionary"""
+        return {
+            "id": self.id,
+            "username": self.username,
+            "password": self.password,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "gender": self.gender.name,
+            "active": self.active,
+            "address": self.address,
+            "email": self.email,
+        }
 
     def deserialize(self, data):
         """
-        Deserializes a YourResourceModel from a dictionary
+        Deserializes a Customer from a dictionary
 
         Args:
             data (dict): A dictionary containing the resource data
         """
+
         try:
-            self.customer = data["name"]
+            self.id = data["id"]
+            self.username = data["username"]
+            self.password = data["password"]
+            self.first_name = data["first_name"]
+            self.last_name = data["last_name"]
+            self.gender = getattr(Gender, data["gender"])
+            if isinstance(data["active"], bool):
+                self.active = data["active"]
+            else:
+                raise DataValidationError("Invalid type for active Boolean")
+            self.address = data["address"]
+            self.email = data["email"]
+
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0]) from error
         except KeyError as error:
             raise DataValidationError(
-                "Invalid YourResourceModel: missing " + error.args[0]
+                "Invalid Customer: missing " + error.args[0]
             ) from error
         except TypeError as error:
             raise DataValidationError(
-                "Invalid YourResourceModel: body of request contained bad or no data "
+                "Invalid Customer: body of request contained bad or no data "
                 + str(error)
             ) from error
         return self
@@ -120,22 +144,22 @@ class Customer(db.Model):
 
     @classmethod
     def all(cls):
-        """Returns all of the YourResourceModels in the database"""
-        logger.info("Processing all YourResourceModels")
+        """Returns all of the Customer in the database"""
+        logger.info("Processing all Customer")
         return cls.query.all()
 
     @classmethod
     def find(cls, by_id):
-        """Finds a YourResourceModel by it's ID"""
+        """Finds a Customer by it's ID"""
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
 
     @classmethod
-    def find_by_name(cls, name):
-        """Returns all YourResourceModels with the given name
+    def find_by_name(cls, first_name):
+        """Returns all Customer with the given name
 
         Args:
             name (string): the name of the YourResourceModels you want to match
         """
-        logger.info("Processing name query for %s ...", name)
-        return cls.query.filter(cls.name == name)
+        logger.info("Processing name query for %s ...", first_name)
+        return cls.query.filter(cls.first_name == first_name)
