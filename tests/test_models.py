@@ -1,5 +1,5 @@
 """
-Test cases for Pet Model
+Test cases for Customer Model
 """
 
 import os
@@ -188,7 +188,7 @@ class TestCustomer(TestCase):
         customer = CustomerFactory()
         customer.create()
         self.assertEqual(len(Customer.all()), 1)
-        # delete the pet and make sure it isn't in the database
+        # delete the customer and make sure it isn't in the database
         customer.delete()
         self.assertEqual(len(Customer.all()), 0)
 
@@ -211,7 +211,7 @@ class TestCustomer(TestCase):
             mock_delete.assert_called_once_with(customer)
             mock_commit.assert_called_once()
 
-    def test_list_all_pets(self):
+    def test_list_all_customers(self):
         """It should List all Customers in the database"""
         customers = Customer.all()
         self.assertEqual(customers, [])
@@ -223,7 +223,7 @@ class TestCustomer(TestCase):
         customers = Customer.all()
         self.assertEqual(len(customers), 5)
 
-    def test_serialize_a_pet(self):
+    def test_serialize_a_customer(self):
         """It should serialize a Customer"""
         customer = CustomerFactory()
         data = customer.serialize()
@@ -247,7 +247,7 @@ class TestCustomer(TestCase):
         self.assertIn("email", data)
         self.assertEqual(data["email"], customer.email)
 
-    def test_deserialize_a_pet(self):
+    def test_deserialize_a_customer(self):
         """It should de-serialize a Customer"""
         data = CustomerFactory().serialize()
         customer = Customer()
@@ -312,7 +312,7 @@ class TestCustomer(TestCase):
 class TestModelQueries(TestCase):
     """Customer Model Query Tests"""
 
-    def test_find_pet(self):
+    def test_find_customer(self):
         """It should Find a Customer by ID"""
         customers = CustomerFactory.create_batch(5)
         for customer in customers:
@@ -320,7 +320,7 @@ class TestModelQueries(TestCase):
         logging.debug(customers)
         # make sure they got saved
         self.assertEqual(len(Customer.all()), 15)
-        # find the 2nd pet in the list
+        # find the 2nd customer in the list
         customer = Customer.find(customers[1].id)
         self.assertIsNot(customer, None)
         self.assertEqual(customer.id, customers[1].id)

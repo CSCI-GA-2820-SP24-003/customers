@@ -16,6 +16,7 @@
 Test Factory to make fake objects for testing
 """
 import factory
+import secrets
 from factory.fuzzy import FuzzyChoice
 from service.models import Customer, Gender
 
@@ -29,8 +30,8 @@ class CustomerFactory(factory.Factory):
         model = Customer
 
     id = factory.Sequence(lambda n: n)
-    username = "fidodog"
-    password = "123456789"
+    username = FuzzyChoice(choices=["admin", "user123", "user345", "user456"])
+    password = secrets.token_hex(8)
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
     gender = FuzzyChoice(choices=[Gender.MALE, Gender.FEMALE, Gender.UNKNOWN])
