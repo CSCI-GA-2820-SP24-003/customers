@@ -79,7 +79,7 @@ class TestYourResourceService(TestCase):
         self.assertEqual(new_customer["address"], test_customer.address)
         self.assertEqual(new_customer["email"], test_customer.email)
 
-        # Uncomment this code when get_accounts is implemented
+        # Todo: Uncomment this code when get_accounts is implemented
         # Check that the location header was correct
         # response = self.client.get(location)
         # self.assertEqual(response.status_code, status.HTTP_200_OK)
