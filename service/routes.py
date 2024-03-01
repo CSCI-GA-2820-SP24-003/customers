@@ -43,4 +43,64 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
-# Todo: Place your REST API code here ...
+######################################################################
+# CREATE CUSTOMER
+######################################################################
+
+
+@app.route("/customers", methods=["POST"])
+def create_customers():
+    """
+    Creates a Customer
+
+    This endpoint will create a Customer based the data in the body that is posted
+    """
+    app.logger.info("Request to create a customer")
+    check_content_type("application/json")
+
+    customer = Customer()
+    customer.deserialize(request.get_json())
+    customer.create()
+    message = customer.serialize()
+    # Todo: uncomment this code when get_customers is implemented
+    # location_url = url_for("get_customers", id=customer.id, _external=True)
+    location_url = "unknown"
+    app.logger.info("Customer with ID: %d created.", customer.id)
+    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
+
+
+######################################################################
+#  U T I L I T Y   F U N C T I O N S
+######################################################################
+
+
+######################################################################
+# Checks the ContentType of a request
+######################################################################
+def check_content_type(content_type):
+    """Checks that the media type is correct"""
+    if "Content-Type" not in request.headers:
+        app.logger.error("No Content-Type specified.")
+        error(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            f"Content-Type must be {content_type}",
+        )
+
+    if request.headers["Content-Type"] == content_type:
+        return
+
+    app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
+    error(
+        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        f"Content-Type must be {content_type}",
+    )
+
+######################################################################
+# Logs error messages before aborting
+######################################################################
+
+
+def error(status_code, reason):
+    """Logs the error and then aborts"""
+    app.logger.error(reason)
+    abort(status_code, reason)
