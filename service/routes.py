@@ -60,12 +60,12 @@ def get_customers(customer_id):
     if not customer:
         error(status.HTTP_404_NOT_FOUND, f"Customer with id '{customer_id}' was not found.")
 
-    app.logger.info("Returning customer: %s", customer.name)
+    app.logger.info("Returning customer: %s %s", customer.first_name, customer.last_name)
     return jsonify(customer.serialize()), status.HTTP_200_OK
 
 
 ######################################################################
-# CREATE A NEW CUSTOMER
+# CREATE CUSTOMER
 ######################################################################
 @app.route("/customers", methods=["POST"])
 def create_customers():

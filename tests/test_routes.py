@@ -73,6 +73,41 @@ class TestCustomerService(TestCase):
         resp = self.client.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
+    def test_create_customer(self):
+        """It should Create a new Customer"""
+        test_customer = CustomerFactory()
+        logging.debug("Test Customer: %s", test_customer.serialize())
+        response = self.client.post(BASE_URL, json=test_customer.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Make sure location header is set
+        location = response.headers.get("Location", None)
+        self.assertIsNotNone(location)
+
+        # Check the data is correct
+        new_customer = response.get_json()
+        self.assertEqual(new_customer["username"], test_customer.username)
+        self.assertEqual(new_customer["password"], test_customer.password)
+        self.assertEqual(new_customer["first_name"], test_customer.first_name)
+        self.assertEqual(new_customer["last_name"], test_customer.last_name)
+        self.assertEqual(new_customer["gender"], test_customer.gender.name)
+        self.assertEqual(new_customer["active"], test_customer.active)
+        self.assertEqual(new_customer["address"], test_customer.address)
+        self.assertEqual(new_customer["email"], test_customer.email)
+
+        # Check that the location header was correct
+        response = self.client.get(location)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_customer = response.get_json()
+        self.assertEqual(new_customer["username"], test_customer.username)
+        self.assertEqual(new_customer["password"], test_customer.password)
+        self.assertEqual(new_customer["first_name"], test_customer.first_name)
+        self.assertEqual(new_customer["last_name"], test_customer.last_name)
+        self.assertEqual(new_customer["gender"], test_customer.gender.name)
+        self.assertEqual(new_customer["active"], test_customer.active)
+        self.assertEqual(new_customer["address"], test_customer.address)
+        self.assertEqual(new_customer["email"], test_customer.email)
+
     def test_delete_customer(self):
         """It should Delete a Customer"""
         test_customer = self._create_customers(1)[0]
