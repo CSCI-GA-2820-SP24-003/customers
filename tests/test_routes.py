@@ -118,11 +118,10 @@ class TestCustomerService(TestCase):
         response = self.client.get(f"{BASE_URL}/{test_customer.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
     
-    # Todo: Uncomment this code when list_customers is implemented
-    # def test_get_customer_list(self):
-    #     """It should Get a list of Customers"""
-    #     self._create_customers(5)
-    #     response = self.client.get(BASE_URL)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     data = response.get_json()
-    #     self.assertEqual(len(data), 5)
+    def test_get_customer_list(self):
+        """It should Get a list of Customers"""
+        self._create_customers(5)
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 5)
