@@ -15,10 +15,10 @@
 ######################################################################
 
 """
-Pet Store Service
+Customer Store Service
 
 This service implements a REST API that allows you to Create, Read, Update
-and Delete Pets from the inventory of pets in the PetShop
+and Delete Customers from the inventory of customers in the CustomerShop
 """
 
 from flask import jsonify, request, url_for, abort
@@ -43,11 +43,30 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
+
+######################################################################
+# READ A CUSTOMER
+######################################################################
+@app.route("/customers/<int:customer_id>", methods=["GET"])
+def get_customers(customer_id):
+    """
+    Retrieve a single Customer
+
+    This endpoint will return a Customer based on it's id
+    """
+    app.logger.info("Request for customer with id: %s", customer_id)
+
+    customer = Customer.find(customer_id)
+    if not customer:
+        error(status.HTTP_404_NOT_FOUND, f"Customer with id '{customer_id}' was not found.")
+
+    app.logger.info("Returning customer: %s %s", customer.first_name, customer.last_name)
+    return jsonify(customer.serialize()), status.HTTP_200_OK
+
+
 ######################################################################
 # CREATE CUSTOMER
 ######################################################################
-
-
 @app.route("/customers", methods=["POST"])
 def create_customers():
     """
@@ -62,11 +81,29 @@ def create_customers():
     customer.deserialize(request.get_json())
     customer.create()
     message = customer.serialize()
-    # Todo: uncomment this code when get_customers is implemented
-    # location_url = url_for("get_customers", id=customer.id, _external=True)
-    location_url = "unknown"
+    location_url = url_for("get_customers", customer_id=customer.id, _external=True)
+
     app.logger.info("Customer with ID: %d created.", customer.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
+
+
+######################################################################
+# DELETE A CUSTOMER
+######################################################################
+@app.route("/customers/<int:customer_id>", methods=["DELETE"])
+def delete_customers(customer_id):
+    """
+    Delete a Customer
+
+    This endpoint will delete a Customer based the id specified in the path
+    """
+    app.logger.info("Request to delete customer with id: %d", customer_id)
+    customer = Customer.find(customer_id)
+    if customer:
+        customer.delete()
+
+    app.logger.info("Customer with ID: %d delete complete.", customer_id)
+    return "", status.HTTP_204_NO_CONTENT
 
 
 ######################################################################
@@ -95,11 +132,10 @@ def check_content_type(content_type):
         f"Content-Type must be {content_type}",
     )
 
+
 ######################################################################
 # Logs error messages before aborting
 ######################################################################
-
-
 def error(status_code, reason):
     """Logs the error and then aborts"""
     app.logger.error(reason)
