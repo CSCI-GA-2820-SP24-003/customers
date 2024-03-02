@@ -117,7 +117,7 @@ class TestCustomerService(TestCase):
         # make sure they are deleted
         response = self.client.get(f"{BASE_URL}/{test_customer.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    
+
     def test_get_customer_list(self):
         """It should Get a list of Customers"""
         self._create_customers(5)
