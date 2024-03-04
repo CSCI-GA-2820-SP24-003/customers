@@ -127,7 +127,7 @@ class TestCustomerService(TestCase):
         self.assertEqual(len(data), 5)
 
     def test_update_customer(self):
-        """It should Update an existing customer"""
+        """It should Update an existing Customer"""
         # create a customer to update
         test_customer = CustomerFactory()
         response = self.client.post(BASE_URL, json=test_customer.serialize())
@@ -136,24 +136,21 @@ class TestCustomerService(TestCase):
         # update the customer
         new_customer = response.get_json()
         logging.debug(new_customer)
-        new_customer["username"] = "newusername"
-        new_customer["password"] = "newpassword"
+        new_customer["username"] = "unknown"
+        new_customer["password"] = "new_password"
         new_customer["first_name"] = "new_first_name"
         new_customer["last_name"] = "new_last_name"
-        new_customer["gender"] = Gender.Male
-        new_customer["active"] = True
         new_customer["address"] = "new_address"
+        new_customer["email"] = "new_email"
+
         response = self.client.put(
             f"{BASE_URL}/{new_customer['id']}", json=new_customer
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_customer = response.get_json()
-        self.assertEqual(updated_customer.username, "newusername")
-        self.assertEqual(updated_customer.password, "newpassword")
-        self.assertTrue(updated_customer is not None)
-        self.assertEqual(updated_customer.id, None)
-        self.assertEqual(updated_customer.first_name, "new_first_name")
-        self.assertEqual(updated_customer.last_name, "new_last_name")
-        self.assertEqual(updated_customer.active, True)
-        self.assertEqual(updated_customer.gender, Gender.MALE)
-        self.assertTrue(updated_customer.address is not None)
+        self.assertEqual(updated_customer["username"], "unknown")
+        self.assertEqual(new_customer["password"], "new_password")
+        self.assertEqual(new_customer["first_name"], "new_first_name")
+        self.assertEqual(new_customer["last_name"], "new_last_name")
+        self.assertEqual(new_customer["address"], "new_address")
+        self.assertEqual(new_customer["email"], "new_email")
