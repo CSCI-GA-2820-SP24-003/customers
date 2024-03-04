@@ -7,7 +7,7 @@ import logging
 from unittest import TestCase
 from wsgi import app
 from service.common import status
-from service.models import db, Customer
+from service.models import db, Customer, Gender
 from .customer_factory import CustomerFactory
 
 DATABASE_URI = os.getenv(
@@ -47,7 +47,7 @@ class TestCustomerService(TestCase):
     def tearDown(self):
         """This runs after each test"""
         db.session.remove()
-    
+
     def _create_customers(self, count):
         """Factory method to create customers in bulk"""
         customers = []
@@ -125,3 +125,35 @@ class TestCustomerService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
+
+    def test_update_customer(self):
+        """It should Update an existing customer"""
+        # create a customer to update
+        test_customer = CustomerFactory()
+        response = self.client.post(BASE_URL, json=test_customer.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # update the customer
+        new_customer = response.get_json()
+        logging.debug(new_customer)
+        new_customer["username"] = "newusername"
+        new_customer["password"] = "newpassword"
+        new_customer["first_name"] = "new_first_name"
+        new_customer["last_name"] = "new_last_name"
+        new_customer["gender"] = Gender.Male
+        new_customer["active"] = True
+        new_customer["address"] = "new_address"
+        response = self.client.put(
+            f"{BASE_URL}/{new_customer['id']}", json=new_customer
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_customer = response.get_json()
+        self.assertEqual(updated_customer.username, "newusername")
+        self.assertEqual(updated_customer.password, "newpassword")
+        self.assertTrue(updated_customer is not None)
+        self.assertEqual(updated_customer.id, None)
+        self.assertEqual(updated_customer.first_name, "new_first_name")
+        self.assertEqual(updated_customer.last_name, "new_last_name")
+        self.assertEqual(updated_customer.active, True)
+        self.assertEqual(updated_customer.gender, Gender.MALE)
+        self.assertTrue(updated_customer.address is not None)
