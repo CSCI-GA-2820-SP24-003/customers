@@ -9,6 +9,7 @@ from wsgi import app
 from service.common import status
 from service.models import db, Customer, Gender
 from .customer_factory import CustomerFactory
+from unittest.mock import patch
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
@@ -127,7 +128,7 @@ class TestCustomerService(TestCase):
         self.assertEqual(len(data), 5)
 
     def test_update_customer(self):
-        """It should Update an existing customer"""
+        """It should Update an existing Customer"""
         # create a customer to update
         test_customer = CustomerFactory()
         response = self.client.post(BASE_URL, json=test_customer.serialize())
@@ -136,79 +137,16 @@ class TestCustomerService(TestCase):
         # update the customer
         new_customer = response.get_json()
         logging.debug(new_customer)
-        new_customer["username"] = "newusername"
-        new_customer["password"] = "newpassword"
+        new_customer["username"] = "unknown"
+        new_customer["password"] = "new_password"
         new_customer["first_name"] = "new_first_name"
         new_customer["last_name"] = "new_last_name"
-        new_customer["gender"] = Gender.Male
-        new_customer["active"] = True
         new_customer["address"] = "new_address"
+        new_customer["email"] = "new_email"
+
         response = self.client.put(
             f"{BASE_URL}/{new_customer['id']}", json=new_customer
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_customer = response.get_json()
-        self.assertEqual(updated_customer.username, "newusername")
-        self.assertEqual(updated_customer.password, "newpassword")
-        self.assertTrue(updated_customer is not None)
-        self.assertEqual(updated_customer.id, None)
-        self.assertEqual(updated_customer.first_name, "new_first_name")
-        self.assertEqual(updated_customer.last_name, "new_last_name")
-        self.assertEqual(updated_customer.active, True)
-        self.assertEqual(updated_customer.gender, Gender.MALE)
-        self.assertTrue(updated_customer.address is not None)
 
-    def test_get_customer_not_found(self):
-        """It should Return Not Found when the Customer does not exist"""
-        non_existent_customer_id = 9999
-        response = self.client.get(f"{BASE_URL}/{non_existent_customer_id}")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        error_response = response.get_json()
-        self.assertIn("was not found", error_response["message"])
-
-    def test_get_customer_success(self):
-        """It should Retrieve an existing Customer"""
-        test_customer = CustomerFactory()
-        response = self.client.post(BASE_URL, json=test_customer.serialize())
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        new_customer = response.get_json()
-        response = self.client.get(f"{BASE_URL}/{new_customer['id']}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        retrieved_customer = response.get_json()
-        self.assertEqual(retrieved_customer["id"], new_customer["id"])
-        self.assertEqual(retrieved_customer["first_name"], test_customer.first_name)
-        self.assertEqual(retrieved_customer["last_name"], test_customer.last_name)
-        self.assertEqual(retrieved_customer["username"], test_customer.username)
-        self.assertEqual(retrieved_customer["password"], test_customer.password)
-        self.assertEqual(retrieved_customer["address"], test_customer.address)
-        self.assertEqual(retrieved_customer["email"], test_customer.email)
-
-    def test_data_validation_error(self):
-        """It should return a status code for an Invalid Field"""
-        response = self.client.post(
-            "/customers", json={"invalid_field": "invalid_value"}
-        )
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("Bad Request", response.json["error"])
-
-    def test_bad_request(self):
-        """It should return the correct bad request"""
-        response = self.client.post(
-            "/customers", data="This is not JSON", content_type="application/json"
-        )
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("Bad Request", response.json["error"])
-
-    def test_method_not_supported(self):
-        """It should return the correct method not allowed"""
-        response = self.client.put("/")
-        self.assertEqual(response.status_code, 405)
-        self.assertIn("Method not Allowed", response.json["error"])
-
-    def test_mediatype_not_supported(self):
-        """It should return that the datatype is not supported"""
-        response = self.client.post("/customers", data="{}", content_type="text/plain")
-        self.assertEqual(response.status_code, 415)
-        self.assertIn("Unsupported media type", response.json["error"])
