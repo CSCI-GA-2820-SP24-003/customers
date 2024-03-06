@@ -38,10 +38,21 @@ def encrypt_password(password):
 @app.route("/")
 def index():
     """Root URL response"""
-    return (
-        "Reminder: return some useful information in json format about the service here",
-        status.HTTP_200_OK,
-    )
+    # return (
+    #     "Reminder: return some useful information in json format about the service here",
+    #     status.HTTP_200_OK,
+    # )
+    return jsonify({
+        "1_Customers": "Welcome to the Customer Store Service API. This API allows you to manage the customers.",
+        "2_methods_available": {
+            "2.1 GET /customers/<customer_id>": "Retrieve a single customer by ID.",
+            "2.2 POST /customers": "Create a new customer.",
+            "2.3 DELETE /customers/<customer_id>": "Delete a customer by ID.",
+            "2.4 GET /customers": "Retrieve a list of all customers.",
+            "2.5 PUT /customers/<customer_id>": "Update an existing customer by ID."
+        },
+        "3_contact": "For more information, refer to the API documentation or contact support@example.com."
+    }), status.HTTP_200_OK
 
 
 ######################################################################
