@@ -4,6 +4,7 @@ Test cases for Customer Model
 
 import os
 import logging
+import hashlib
 from unittest import TestCase
 from unittest.mock import patch
 from tests.customer_factory import CustomerFactory
@@ -152,15 +153,22 @@ class TestCustomer(TestCase):
         # Change it an save it
         customer.first_name = "Jack"
         original_id = customer.id
+        original_password = customer.password
+        new_password = "new password"
+        customer.password = new_password
+        customer.update(original_password)
+        hashed_new_password = hashlib.sha256(new_password.encode("UTF-8")).hexdigest()
         customer.update()
         self.assertEqual(customer.id, original_id)
         self.assertEqual(customer.first_name, "Jack")
+        self.assertEqual(customer.password, hashed_new_password)
         # Fetch it back and make sure the id hasn't changed
         # but the data did change
         customers = Customer.all()
         self.assertEqual(len(customers), 1)
         self.assertEqual(customers[0].id, original_id)
         self.assertEqual(customers[0].first_name, "Jack")
+        self.assertEqual(customers[0].password, hashed_new_password)
 
     def test_update_no_id(self):
         """It should not Update a Customer with no id"""
@@ -328,6 +336,7 @@ class TestModelQueries(TestCase):
         self.assertEqual(customer.first_name, customers[1].first_name)
         self.assertEqual(customer.last_name, customers[1].last_name)
         self.assertEqual(customer.username, customers[1].username)
+        self.assertEqual(customer.password, customers[1].password)
         self.assertEqual(customer.gender.name, customers[1].gender.name)
         self.assertEqual(customer.active, customers[1].active)
         self.assertEqual(customer.address, customers[1].address)

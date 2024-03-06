@@ -15,8 +15,8 @@
 """
 Test Factory to make fake objects for testing
 """
-import factory
 import secrets
+import factory
 from factory.fuzzy import FuzzyChoice
 from service.models import Customer, Gender
 

@@ -20,11 +20,16 @@ Customer Store Service
 This service implements a REST API that allows you to Create, Read, Update
 and Delete Customers from the inventory of customers in the CustomerShop
 """
-
+import hashlib
 from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
 from service.models import Customer
 from service.common import status  # HTTP Status Codes
+
+
+def encrypt_password(password):
+    """ Hashing Passwords """
+    return hashlib.sha256(password.encode("UTF-8")).hexdigest()
 
 
 ######################################################################
@@ -64,7 +69,7 @@ def get_customers(customer_id):
         )
 
     app.logger.info(
-        "Returning customer: %s %s", customer.first_name, customer.last_name
+        "Returning customer: %s", customer.id
     )
     return jsonify(customer.serialize()), status.HTTP_200_OK
 
@@ -138,17 +143,22 @@ def update_customers(customer_id):
     """
     app.logger.info("Request to update customer with id: %d", customer_id)
     check_content_type("application/json")
-
+    # original_password = None
     customer = Customer.find(customer_id)
     if not customer:
         error(
             status.HTTP_404_NOT_FOUND,
             f"Customer with id: '{customer_id}' was not found.",
         )
+    # else:
+    original_hashed_password = customer.password
 
     customer.deserialize(request.get_json())
     customer.id = customer_id
-    customer.update()
+    # Hash the new password if it's different from the original
+    if customer.password != original_hashed_password:
+        customer.password = encrypt_password(customer.password)
+    customer.update(original_hashed_password)
 
     app.logger.info("Customer with ID: %d updated.", customer.id)
     return jsonify(customer.serialize()), status.HTTP_200_OK
