@@ -5,11 +5,17 @@ All of the models are stored in this module
 """
 
 import logging
-from flask_sqlalchemy import SQLAlchemy
 from enum import Enum
-
+import hashlib
+from flask_sqlalchemy import SQLAlchemy
 
 logger = logging.getLogger("flask.app")
+
+
+def encrypt_password(password):
+    """ Hashing Passwords """
+    return hashlib.sha256(password.encode("UTF-8")).hexdigest()
+
 
 # Create the SQLAlchemy object to be initialized later in init_db()
 db = SQLAlchemy()
@@ -36,16 +42,16 @@ class Customer(db.Model):
     # Table Schema
     ##################################################
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), nullable=False)
-    password = db.Column(db.String(30), nullable=False)
-    first_name = db.Column(db.String(63), nullable=False)
-    last_name = db.Column(db.String(63), nullable=False)
+    username = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(255), nullable=False)
+    last_name = db.Column(db.String(255), nullable=False)
     gender = db.Column(
         db.Enum(Gender), nullable=False, server_default=(Gender.UNKNOWN.name)
     )
     active = db.Column(db.Boolean(), nullable=False, default=False)
-    address = db.Column(db.String(63), nullable=False)
-    email = db.Column(db.String(63), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), nullable=False)
 
     def __repr__(self):
         return f"<Customer {self.first_name, self.last_name} id=[{self.id}]>"
@@ -56,6 +62,7 @@ class Customer(db.Model):
         """
         logger.info("Creating %s", self.first_name)
         self.id = None  # pylint: disable=invalid-name
+        self.password = encrypt_password(self.password)
         try:
             db.session.add(self)
             db.session.commit()
@@ -64,13 +71,16 @@ class Customer(db.Model):
             logger.error("Error creating record: %s", self)
             raise DataValidationError(e) from e
 
-    def update(self):
+    def update(self, original_password=None):
         """
         Updates a Customer to the database
         """
         logger.info("Saving %s", self.first_name)
         if self.id is None:
             raise DataValidationError("There is no valid ID Specified")
+        # if PWD changed, hash again
+        if original_password is not None and not original_password == self.password:
+            self.password = encrypt_password(self.password)
         try:
             db.session.commit()
         except Exception as e:
