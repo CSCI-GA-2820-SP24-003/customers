@@ -21,9 +21,13 @@ DATABASE_URI = os.getenv(
 #  C U S T O M E R   T E S T   C A S E S
 ######################################################################
 # pylint: disable=too-many-public-methods
+
+
 class TestCustomer(TestCase):
     """Test Cases for customer Model"""
 
+    # pylint: disable=R0801
+    # Disable pylint message R0801 (similar lines in 2 files) for the following block
     @classmethod
     def setUpClass(cls):
         """This runs once before the entire test suite"""
@@ -46,6 +50,9 @@ class TestCustomer(TestCase):
     def tearDown(self):
         """This runs after each test"""
         db.session.remove()
+
+    # pylint: enable=R0801
+    # Re-enable pylint message R0801 (similar lines in 2 files) after the block of code
 
     ######################################################################
     #  T E S T   C A S E S
@@ -307,7 +314,7 @@ class TestCustomer(TestCase):
     def test_representing_a_customer(self):
         """When trying to represent a customer, it should return the correct string"""
         test_customer = CustomerFactory()
-        customer_output = test_customer.__repr__()
+        customer_output = repr(test_customer)
         self.assertEqual(
             customer_output,
             f"<Customer {test_customer.first_name, test_customer.last_name} id=[{test_customer.id}]>",
