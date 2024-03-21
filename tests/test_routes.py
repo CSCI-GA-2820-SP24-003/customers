@@ -10,6 +10,7 @@ from wsgi import app
 from service.common import status
 from service.models import db, Customer
 from .customer_factory import CustomerFactory
+
 # from unittest.mock import patch
 
 
@@ -20,7 +21,7 @@ BASE_URL = "/customers"
 
 
 def encrypt_password(password):
-    """ Hashing Password """
+    """Hashing Password"""
     return hashlib.sha256(password.encode("UTF-8")).hexdigest()
 
 
@@ -28,6 +29,8 @@ def encrypt_password(password):
 #  T E S T   C A S E S
 ######################################################################
 # pylint: disable=too-many-public-methods
+
+
 class TestCustomerService(TestCase):
     """REST API Server Tests"""
 
@@ -193,7 +196,9 @@ class TestCustomerService(TestCase):
         self.assertEqual(retrieved_customer["first_name"], test_customer.first_name)
         self.assertEqual(retrieved_customer["last_name"], test_customer.last_name)
         self.assertEqual(retrieved_customer["username"], test_customer.username)
-        self.assertEqual(retrieved_customer["password"], encrypt_password(test_customer.password))
+        self.assertEqual(
+            retrieved_customer["password"], encrypt_password(test_customer.password)
+        )
         self.assertEqual(retrieved_customer["address"], test_customer.address)
         self.assertEqual(retrieved_customer["email"], test_customer.email)
 
