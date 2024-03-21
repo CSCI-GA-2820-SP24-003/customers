@@ -13,7 +13,7 @@ logger = logging.getLogger("flask.app")
 
 
 def encrypt_password(password):
-    """ Hashing Passwords """
+    """Hashing Passwords"""
     return hashlib.sha256(password.encode("UTF-8")).hexdigest()
 
 
@@ -31,6 +31,9 @@ class Gender(Enum):
 
 class DataValidationError(Exception):
     """Used for an data validation errors when deserializing"""
+
+
+# pylint: disable=too-many-instance-attributes
 
 
 class Customer(db.Model):
