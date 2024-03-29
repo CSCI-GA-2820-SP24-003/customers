@@ -362,3 +362,26 @@ class TestModelQueries(TestCase):
         self.assertEqual(found.count(), count)
         for customer in found:
             self.assertEqual(customer.first_name, first_name)
+
+    def test_query_by_active(self):
+        """It should list all customers by active/inactive boolean"""
+        customers = CustomerFactory.create_batch(10)
+        for customer in customers:
+            customer.create()
+        active = customers[0].active
+        count = len([customer for customer in customers if customer.active == active])
+        query = Customer.query_by_active(active)
+
+        self.assertEqual(query.count(), count)
+
+    def test_query_by_gender(self):
+        """It should return a list of all customers with the specified gender."""
+        customers = CustomerFactory.create_batch(10)
+        for customer in customers:
+            customer.create()
+        gender = customers[0].gender
+        expected_count = len(
+            [customer for customer in customers if customer.gender == gender]
+        )
+        query_result = Customer.query_by_gender(gender).all()
+        self.assertEqual(len(query_result), expected_count)
