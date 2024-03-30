@@ -178,13 +178,25 @@ class Customer(db.Model):
         return cls.query.filter(cls.first_name == first_name)
 
     @classmethod
+    def query_by_last_name(cls, last_name):
+        """It should return a list of all customers with a certain last_name"""
+        logger.info("Processing lookup for %s ...", last_name)
+        return cls.query.filter(cls.last_name == last_name)
+
+    @classmethod
     def query_by_active(cls, active):
         """It should return a list of all active/inactive customers"""
-        logger.info("Processing lookup for id %s ...", active)
-        cls.query.filter(cls.active == active)
+        logger.info("Processing lookup for %s ...", active)
+        return cls.query.filter(cls.active == active)
 
     @classmethod
     def query_by_gender(cls, gender):
         """It should return a list of all customers when given a gender"""
-        logger.info("Processing lookup for id %s ...", gender)
+        logger.info("Processing lookup for %s ...", gender)
         return cls.query.filter(cls.gender == gender)
+
+    @classmethod
+    def query_by_address(cls, address):
+        """It should return a list of all customers with a certain address"""
+        logger.info("Processing lookup for %s ...", address)
+        return cls.query.filter(cls.address == address)

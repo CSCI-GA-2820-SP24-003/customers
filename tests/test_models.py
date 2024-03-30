@@ -325,7 +325,30 @@ class TestCustomer(TestCase):
 #  Q U E R Y   T E S T   C A S E S
 ######################################################################
 class TestModelQueries(TestCase):
-    """Customer Model Query Tests"""
+    """Setup and Tear down for test cases"""
+
+    @classmethod
+    def setUpClass(cls):
+        """This runs once before the entire test suite"""
+        app.config["TESTING"] = True
+        app.config["DEBUG"] = False
+        app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
+        app.logger.setLevel(logging.CRITICAL)
+        app.app_context().push()
+
+    @classmethod
+    def tearDownClass(cls):
+        """This runs once after the entire test suite"""
+        db.session.close()
+
+    def setUp(self):
+        """This runs before each test"""
+        db.session.query(Customer).delete()  # clean up the last tests
+        db.session.commit()
+
+    def tearDown(self):
+        """This runs after each test"""
+        db.session.remove()
 
     def test_find_customer(self):
         """It should Find a Customer by ID"""
@@ -334,7 +357,7 @@ class TestModelQueries(TestCase):
             customer.create()
         logging.debug(customers)
         # make sure they got saved
-        self.assertEqual(len(Customer.all()), 15)
+        self.assertEqual(len(Customer.all()), 5)
         # find the 2nd customer in the list
         customer = Customer.find(customers[1].id)
         self.assertIsNot(customer, None)
@@ -363,6 +386,22 @@ class TestModelQueries(TestCase):
         for customer in found:
             self.assertEqual(customer.first_name, first_name)
 
+    def test_query_by_last_name(self):
+        """It should return a list of all customers with the specified last_name."""
+        customers = CustomerFactory.create_batch(10)
+        for customer in customers:
+            customer.create()
+        logging.debug(customers)
+        last_name = customers[0].last_name
+        count = len(
+            [customer for customer in customers if customer.last_name == last_name]
+        )
+        query = Customer.query_by_last_name(last_name)
+
+        self.assertEqual(query.count(), count)
+        for customer in query:
+            self.assertEqual(customer.last_name, last_name)
+
     def test_query_by_active(self):
         """It should list all customers by active/inactive boolean"""
         customers = CustomerFactory.create_batch(10)
@@ -373,15 +412,35 @@ class TestModelQueries(TestCase):
         query = Customer.query_by_active(active)
 
         self.assertEqual(query.count(), count)
+        for customer in query:
+            self.assertEqual(customer.active, active)
 
     def test_query_by_gender(self):
         """It should return a list of all customers with the specified gender."""
         customers = CustomerFactory.create_batch(10)
         for customer in customers:
             customer.create()
-        gender = customers[0].gender
-        expected_count = len(
-            [customer for customer in customers if customer.gender == gender]
+        logging.debug(customers)
+        gender = customers[0].gender.name
+        count = len(
+            [customer for customer in customers if customer.gender.name == gender]
         )
-        query_result = Customer.query_by_gender(gender).all()
-        self.assertEqual(len(query_result), expected_count)
+        query = Customer.query_by_gender(gender)
+
+        self.assertEqual(query.count(), count)
+        for customer in query:
+            self.assertEqual(customer.gender.name, gender)
+
+    def test_query_by_address(self):
+        """It should return a list of all customers with the specified address."""
+        customers = CustomerFactory.create_batch(10)
+        for customer in customers:
+            customer.create()
+        logging.debug(customers)
+        address = customers[0].address
+        count = len([customer for customer in customers if customer.address == address])
+        query = Customer.query_by_address(address)
+
+        self.assertEqual(query.count(), count)
+        for customer in query:
+            self.assertEqual(customer.address, address)
