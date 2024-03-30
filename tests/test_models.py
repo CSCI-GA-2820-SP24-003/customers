@@ -327,6 +327,7 @@ class TestCustomer(TestCase):
 class TestModelQueries(TestCase):
     """Setup and Tear down for test cases"""
 
+    # pylint: disable=R0801
     @classmethod
     def setUpClass(cls):
         """This runs once before the entire test suite"""
