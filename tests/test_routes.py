@@ -29,6 +29,7 @@ def encrypt_password(password):
 #  T E S T   C A S E S
 ######################################################################
 # pylint: disable=too-many-public-methods
+# pylint: disable=R0801
 
 
 class TestCustomerService(TestCase):
