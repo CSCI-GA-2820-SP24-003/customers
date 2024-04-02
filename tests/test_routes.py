@@ -248,3 +248,9 @@ class TestCustomerService(TestCase):
         get_response = self.client.get(f"{BASE_URL}/{created_customer['id']}")
         deactivated_customer = get_response.get_json()
         self.assertFalse(deactivated_customer["active"])
+
+    def test_deactivate_nonexistent_customer(self):
+        """It should return 404 for a nonexistent customer"""
+        nonexistent_customer_id = 99999  # Assuming this ID does not exist
+        response = self.client.put(f"{BASE_URL}/{nonexistent_customer_id}/deactivate")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
