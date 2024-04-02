@@ -87,6 +87,7 @@ GET /: Root URL response.
 | `DELETE` | `/customers/<customer_id>` | Delete a customer with the given `id`. |
 | `GET` | `/customers` | List all customers. |
 | `PUT` | `/customers/<customer_id>` | Update an existing customer with the given `id`. |
+| `PUT` | `/customers/<customer_id>/deactivate` | Deactivate a customer with the given `id`. |
 
 ### Usage
 
