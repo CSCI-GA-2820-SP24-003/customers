@@ -200,3 +200,15 @@ class Customer(db.Model):
         """It should return a list of all customers with a certain address"""
         logger.info("Processing lookup for %s ...", address)
         return cls.query.filter(cls.address == address)
+
+    @classmethod
+    def query_by_username(cls, username):
+        """It should return a list of all customers with a certain username"""
+        logger.info("Processing lookup for %s ...", username)
+        return cls.query.filter(cls.username == username)
+
+    @classmethod
+    def query_by_email(cls, email):
+        """It should return a list of all customers with a certain email"""
+        logger.info("Processing lookup for %s ...", email)
+        return cls.query.filter(cls.email == email)
