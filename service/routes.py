@@ -28,7 +28,7 @@ from service.common import status  # HTTP Status Codes
 
 
 def encrypt_password(password):
-    """ Hashing Passwords """
+    """Hashing Passwords"""
     return hashlib.sha256(password.encode("UTF-8")).hexdigest()
 
 
@@ -42,17 +42,22 @@ def index():
     #     "Reminder: return some useful information in json format about the service here",
     #     status.HTTP_200_OK,
     # )
-    return jsonify({
-        "1_Customers": "Welcome to the Customer Store Service API. This API allows you to manage the customers.",
-        "2_methods_available": {
-            "2.1 GET /customers/<customer_id>": "Retrieve a single customer by ID.",
-            "2.2 POST /customers": "Create a new customer.",
-            "2.3 DELETE /customers/<customer_id>": "Delete a customer by ID.",
-            "2.4 GET /customers": "Retrieve a list of all customers.",
-            "2.5 PUT /customers/<customer_id>": "Update an existing customer by ID."
-        },
-        "3_contact": "For more information, refer to the API documentation or contact support@example.com."
-    }), status.HTTP_200_OK
+    return (
+        jsonify(
+            {
+                "1_Customers": "Welcome to the Customer Store Service API. This API allows you to manage the customers.",
+                "2_methods_available": {
+                    "2.1 GET /customers/<customer_id>": "Retrieve a single customer by ID.",
+                    "2.2 POST /customers": "Create a new customer.",
+                    "2.3 DELETE /customers/<customer_id>": "Delete a customer by ID.",
+                    "2.4 GET /customers": "Retrieve a list of all customers.",
+                    "2.5 PUT /customers/<customer_id>": "Update an existing customer by ID.",
+                },
+                "3_contact": "For more information, refer to the API documentation or contact support@example.com.",
+            }
+        ),
+        status.HTTP_200_OK,
+    )
 
 
 ######################################################################
@@ -79,9 +84,7 @@ def get_customers(customer_id):
             f"Customer with id '{customer_id}' was not found.",
         )
 
-    app.logger.info(
-        "Returning customer: %s", customer.id
-    )
+    app.logger.info("Returning customer: %s", customer.id)
     return jsonify(customer.serialize()), status.HTTP_200_OK
 
 
@@ -173,6 +176,26 @@ def update_customers(customer_id):
 
     app.logger.info("Customer with ID: %d updated.", customer.id)
     return jsonify(customer.serialize()), status.HTTP_200_OK
+
+
+######################################################################
+# DEACTIVATE A CUSTOMER
+######################################################################
+@app.route("/customers/<int:customer_id>/deactivate", methods=["PUT"])
+def deactivate_customer(customer_id):
+    """
+    Deactivate a customer
+    This endpoint will deactivate a customer based on the id specified in the path
+    """
+    customer = Customer.find(customer_id)
+    if not customer:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Customer with id '{customer_id}' was not found.",
+        )
+
+    customer.deactivate()
+    return jsonify(""), status.HTTP_204_NO_CONTENT
 
 
 ######################################################################
