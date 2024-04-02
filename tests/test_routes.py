@@ -231,6 +231,26 @@ class TestCustomerService(TestCase):
         self.assertEqual(response.status_code, 415)
         self.assertIn("Unsupported media type", response.json["error"])
 
+    def test_activate_customer(self):
+        """It should Deactivate a Customer"""
+        test_customer_data = CustomerFactory().serialize()
+        test_customer_data["active"] = False
+
+        # Create customer via POST request
+        create_response = self.client.post(BASE_URL, json=test_customer_data)
+        self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
+        created_customer = create_response.get_json()
+
+        # Activate the customer via PUT request
+        response = self.client.put(f"{BASE_URL}/{created_customer['id']}/activate")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Fetch the customer to verify it's activated
+        get_response = self.client.get(f"{BASE_URL}/{created_customer['id']}")
+
+        activated_customer = get_response.get_json()
+        self.assertTrue(activated_customer["active"])
+
     def test_deactivate_customer(self):
         """It should Deactivate a Customer"""
         test_customer_data = CustomerFactory().serialize()

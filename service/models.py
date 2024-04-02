@@ -151,6 +151,11 @@ class Customer(db.Model):
             ) from error
         return self
 
+    def activate(self):
+        """Activates the customer account"""
+        self.active = True
+        self.update()
+
     def deactivate(self):
         """Deactivates the customer account"""
         self.active = False
