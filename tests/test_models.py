@@ -320,6 +320,14 @@ class TestCustomer(TestCase):
             f"<Customer {test_customer.first_name, test_customer.last_name} id=[{test_customer.id}]>",
         )
 
+    def test_deactivate_a_customer(self):
+        """It should Deactivate a Customer"""
+        customer = CustomerFactory()
+        customer.active = True
+        self.assertTrue(customer.active)
+        customer.deactivate()
+        self.assertFalse(customer.active)
+
 
 ######################################################################
 #  Q U E R Y   T E S T   C A S E S
