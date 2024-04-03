@@ -226,6 +226,7 @@ def deactivate_customer(customer_id):
 ######################################################################
 # Checks the ContentType of a request
 ######################################################################
+@app.route("/customers/<int:customer_id>/check_content_type", methods=["PUT"])
 def check_content_type(content_type):
     """Checks that the media type is correct"""
     if "Content-Type" not in request.headers:

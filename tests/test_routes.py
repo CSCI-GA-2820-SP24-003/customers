@@ -5,11 +5,13 @@ TestCustomerModel API Service Test Suite
 import os
 import logging
 from unittest import TestCase
+from unittest.mock import patch
 import hashlib
 from wsgi import app
 from service.common import status
 from service.models import db, Customer
 from .customer_factory import CustomerFactory
+
 
 # from unittest.mock import patch
 
@@ -269,8 +271,14 @@ class TestCustomerService(TestCase):
         deactivated_customer = get_response.get_json()
         self.assertFalse(deactivated_customer["active"])
 
+    def test_activate_does_not_exist(self):
+        """It should return 404 if the customer does not exist"""
+        non_existent_customer_id = 999999
+        response = self.client.put(f"{BASE_URL}/{non_existent_customer_id}/activate")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_deactivate_nonexistent_customer(self):
         """It should return 404 for a nonexistent customer"""
-        nonexistent_customer_id = 99999  # Assuming this ID does not exist
+        nonexistent_customer_id = 99999
         response = self.client.put(f"{BASE_URL}/{nonexistent_customer_id}/deactivate")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
