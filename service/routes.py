@@ -23,12 +23,12 @@ and Delete Customers from the inventory of customers in the CustomerShop
 import hashlib
 from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
-from service.models import Customer
+from service.models import Customer, Gender
 from service.common import status  # HTTP Status Codes
 
 
 def encrypt_password(password):
-    """ Hashing Passwords """
+    """Hashing Passwords"""
     return hashlib.sha256(password.encode("UTF-8")).hexdigest()
 
 
@@ -42,17 +42,22 @@ def index():
     #     "Reminder: return some useful information in json format about the service here",
     #     status.HTTP_200_OK,
     # )
-    return jsonify({
-        "1_Customers": "Welcome to the Customer Store Service API. This API allows you to manage the customers.",
-        "2_methods_available": {
-            "2.1 GET /customers/<customer_id>": "Retrieve a single customer by ID.",
-            "2.2 POST /customers": "Create a new customer.",
-            "2.3 DELETE /customers/<customer_id>": "Delete a customer by ID.",
-            "2.4 GET /customers": "Retrieve a list of all customers.",
-            "2.5 PUT /customers/<customer_id>": "Update an existing customer by ID."
-        },
-        "3_contact": "For more information, refer to the API documentation or contact support@example.com."
-    }), status.HTTP_200_OK
+    return (
+        jsonify(
+            {
+                "1_Customers": "Welcome to the Customer Store Service API. This API allows you to manage the customers.",
+                "2_methods_available": {
+                    "2.1 GET /customers/<customer_id>": "Retrieve a single customer by ID.",
+                    "2.2 POST /customers": "Create a new customer.",
+                    "2.3 DELETE /customers/<customer_id>": "Delete a customer by ID.",
+                    "2.4 GET /customers": "Retrieve a list of all customers.",
+                    "2.5 PUT /customers/<customer_id>": "Update an existing customer by ID.",
+                },
+                "3_contact": "For more information, refer to the API documentation or contact support@example.com.",
+            }
+        ),
+        status.HTTP_200_OK,
+    )
 
 
 ######################################################################
@@ -79,9 +84,7 @@ def get_customers(customer_id):
             f"Customer with id '{customer_id}' was not found.",
         )
 
-    app.logger.info(
-        "Returning customer: %s", customer.id
-    )
+    app.logger.info("Returning customer: %s", customer.id)
     return jsonify(customer.serialize()), status.HTTP_200_OK
 
 
@@ -128,15 +131,49 @@ def delete_customers(customer_id):
 
 
 ######################################################################
-# LIST ALL CUSTOMERS
+# LIST ALL CUSTOMERS BY ATTRIBUTES
 ######################################################################
 @app.route("/customers", methods=["GET"])
 def list_customers():
-    """Returns all of the Customers"""
+    """Returns all of the Customers by some Attributes"""
     app.logger.info("Request for customer list")
 
-    customers = Customer.all()
+    query = Customer.query
 
+    # if 'username' in request.args:
+    #     query = Customer.query_by_username(request.args.get('username'))
+    # if 'email' in request.args:
+    #     query = Customer.query_by_email(request.args.get('email'))
+    # if 'first_name' in request.args:
+    #     query = Customer.find_by_name(request.args.get('first_name'))
+    # if 'last_name' in request.args:
+    #     query = Customer.query_by_last_name(request.args.get('last_name'))
+    # if 'address' in request.args:
+    #     query = Customer.query_by_address(request.args.get('address'))
+
+    # dynamic querying
+    for param in ["username", "email", "first_name", "last_name", "address"]:
+        if param in request.args:
+            value = request.args.get(param)
+            query = query.filter(getattr(Customer, param) == value)
+
+    if 'gender' in request.args:
+        gender_value = request.args.get('gender').upper()
+        if gender_value in Gender.__members__:
+            query = Customer.query_by_gender(Gender[gender_value])
+        else:
+            return jsonify({"error": "Invalid gender value"}), 400
+
+    if "active" in request.args:
+        active_value = request.args.get("active").lower()
+        if active_value in ["true", "1"]:
+            query = query.filter(Customer.active)
+        elif active_value in ["false", "0"]:
+            query = query.filter(~Customer.active)
+        else:
+            return jsonify({"error": "Invalid active value"}), 400
+
+    customers = query.all()
     results = [customer.serialize() for customer in customers]
     app.logger.info("Returning %d customers", len(results))
     return jsonify(results), status.HTTP_200_OK
