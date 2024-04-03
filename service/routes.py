@@ -23,7 +23,7 @@ and Delete Customers from the inventory of customers in the CustomerShop
 import hashlib
 from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
-from service.models import Customer
+from service.models import Customer, Gender
 from service.common import status  # HTTP Status Codes
 
 
@@ -131,15 +131,49 @@ def delete_customers(customer_id):
 
 
 ######################################################################
-# LIST ALL CUSTOMERS
+# LIST ALL CUSTOMERS BY ATTRIBUTES
 ######################################################################
 @app.route("/customers", methods=["GET"])
 def list_customers():
-    """Returns all of the Customers"""
+    """Returns all of the Customers by some Attributes"""
     app.logger.info("Request for customer list")
 
-    customers = Customer.all()
+    query = Customer.query
 
+    # if 'username' in request.args:
+    #     query = Customer.query_by_username(request.args.get('username'))
+    # if 'email' in request.args:
+    #     query = Customer.query_by_email(request.args.get('email'))
+    # if 'first_name' in request.args:
+    #     query = Customer.find_by_name(request.args.get('first_name'))
+    # if 'last_name' in request.args:
+    #     query = Customer.query_by_last_name(request.args.get('last_name'))
+    # if 'address' in request.args:
+    #     query = Customer.query_by_address(request.args.get('address'))
+
+    # dynamic querying
+    for param in ["username", "email", "first_name", "last_name", "address"]:
+        if param in request.args:
+            value = request.args.get(param)
+            query = query.filter(getattr(Customer, param) == value)
+
+    if 'gender' in request.args:
+        gender_value = request.args.get('gender').upper()
+        if gender_value in Gender.__members__:
+            query = Customer.query_by_gender(Gender[gender_value])
+        else:
+            return jsonify({"error": "Invalid gender value"}), 400
+
+    if "active" in request.args:
+        active_value = request.args.get("active").lower()
+        if active_value in ["true", "1"]:
+            query = query.filter(Customer.active)
+        elif active_value in ["false", "0"]:
+            query = query.filter(~Customer.active)
+        else:
+            return jsonify({"error": "Invalid active value"}), 400
+
+    customers = query.all()
     results = [customer.serialize() for customer in customers]
     app.logger.info("Returning %d customers", len(results))
     return jsonify(results), status.HTTP_200_OK

@@ -453,3 +453,31 @@ class TestModelQueries(TestCase):
         self.assertEqual(query.count(), count)
         for customer in query:
             self.assertEqual(customer.address, address)
+
+    def test_query_by_username(self):
+        """It should Find a Customer by Username"""
+        customers = CustomerFactory.create_batch(10)
+        for customer in customers:
+            customer.create()
+        username = customers[0].username
+        count = len(
+            [customer for customer in customers if customer.username == username]
+        )
+        found = Customer.query_by_username(username)
+        self.assertEqual(found.count(), count)
+        for customer in found:
+            self.assertEqual(customer.username, username)
+
+    def test_query_by_email(self):
+        """It should return a list of all customers with the specified email."""
+        customers = CustomerFactory.create_batch(10)
+        for customer in customers:
+            customer.create()
+        # logging.debug(customers)
+        email = customers[0].email
+        count = len([customer for customer in customers if customer.email == email])
+        query = Customer.query_by_email(email)
+
+        self.assertEqual(query.count(), count)
+        for customer in query:
+            self.assertEqual(customer.email, email)
