@@ -5,7 +5,6 @@ TestCustomerModel API Service Test Suite
 import os
 import logging
 from unittest import TestCase
-from unittest.mock import patch
 import hashlib
 from wsgi import app
 from service.common import status
