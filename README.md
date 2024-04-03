@@ -74,6 +74,7 @@ Our service implements the following functionalities:
 4. Delete a Customer: Deletes a customer based on the provided customer ID.
 5. List All Customers: Returns a list of all customers.
 6. Update an Existing Customer: Updates an existing customer based on the provided data in the request body.
+7. Activate/Deactivate a customer.
 
 ### Root URL
 
@@ -89,6 +90,7 @@ GET /: Root URL response.
 | `GET` | `/customers` | List all customers. |
 | `PUT` | `/customers/<customer_id>` | Update an existing customer with the given `id`. |
 | `PUT` | `/customers/<customer_id>/deactivate` | Deactivate a customer with the given `id`. |
+| `PUT` | `/customers/<customer_id>/activate` | Activate a customer with the given `id`. |
 
 ### Usage
 
@@ -268,7 +270,33 @@ GET /: Root URL response.
 
    URL REQUEST: `/customers/137`
 
-   SUCCESS REPSONSE: `204 NO CONTENT`
+   SUCCESS RESPONSE: `204 NO CONTENT`
+
+6. Deactivate a Customer:
+
+   Send a `PUT` request to `/customers/<customer_id>/active=false` to deactivate a specific customer.
+
+   URL: `localhost:8000/customers/<customer_id>/deactivate`
+
+7. Activate a Customer:
+
+   Send a `PUT` request to `/customers/<customer_id>/active=true` to deactivate a specific customer.
+
+   URL: `localhost:8000/customers/<customer_id>/activate`
+
+### Queries
+
+Our services provide the results to following queries:
+
+1. It filters which users are active/inactive (boolean variable in out database). `/customers?active=true/false`
+
+2. It filters customers based on Gender (Enum). `/customers?gender=female/male/unknown`
+
+3. It filters customers based on first_name, last_name, address. `/customer?address=abc` `/customer?first_name=abc` `/customer?last_name=abc`
+   
+4. It reads customer based on their unique username. `/customer?username=abc`
+
+5. It reads customer based on their unique email. `/customer?email=abc`
 
 ### Error Handling
 
