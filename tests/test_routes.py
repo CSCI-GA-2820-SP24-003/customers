@@ -142,6 +142,149 @@ class TestCustomerService(TestCase):
         data = response.get_json()
         self.assertEqual(len(data), 5)
 
+    def test_get_customer_list_with_username(self):
+        """It should filter customers by username"""
+        CustomerFactory(username="user123").create()
+        CustomerFactory(username="user456").create()
+        CustomerFactory(username="user789").create()
+
+        response = self.client.get(f"{BASE_URL}?username=user123")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['username'], 'user123')
+
+    def test_get_customer_list_with_email(self):
+        """It should filter customers by email"""
+        CustomerFactory(email="123@gmail.com").create()
+        CustomerFactory(email="456@gmail.com").create()
+        CustomerFactory(email="789@gmail.com").create()
+
+        response = self.client.get(f"{BASE_URL}?email=123@gmail.com")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['email'], "123@gmail.com")
+
+    def test_get_customer_list_with_first_name(self):
+        """It should filter customers by first name"""
+        customers = CustomerFactory.create_batch(2)
+        for customer in customers:
+            customer.first_name = "name123"
+            customer.create()
+        customers = CustomerFactory.create_batch(3)
+        for customer in customers:
+            customer.first_name = "name456"
+            customer.create()
+        customers = CustomerFactory.create_batch(4)
+        for customer in customers:
+            customer.first_name = "name789"
+            customer.create()
+
+        response = self.client.get(f"{BASE_URL}?first_name=name123")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]['first_name'], "name123")
+
+    def test_get_customer_list_with_last_name(self):
+        """It should filter customers by last name"""
+        customers = CustomerFactory.create_batch(2)
+        for customer in customers:
+            customer.last_name = "name123"
+            customer.create()
+        customers = CustomerFactory.create_batch(3)
+        for customer in customers:
+            customer.last_name = "name456"
+            customer.create()
+        customers = CustomerFactory.create_batch(4)
+        for customer in customers:
+            customer.last_name = "name789"
+            customer.create()
+
+        response = self.client.get(f"{BASE_URL}?last_name=name123")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]['last_name'], "name123")
+
+    def test_get_customer_list_with_address(self):
+        """It should filter customers by address"""
+        customers = CustomerFactory.create_batch(2)
+        for customer in customers:
+            customer.address = "123 Main St"
+            customer.create()
+        customers = CustomerFactory.create_batch(3)
+        for customer in customers:
+            customer.address = "456 Main St"
+            customer.create()
+        customers = CustomerFactory.create_batch(4)
+        for customer in customers:
+            customer.address = "789 Main St"
+            customer.create()
+
+        response = self.client.get(f"{BASE_URL}?address=123 Main St")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]['address'], "123 Main St")
+
+    def test_get_customer_list_with_gender(self):
+        """It should filter customers by gender"""
+        customers = CustomerFactory.create_batch(2)
+        for customer in customers:
+            customer.gender = "MALE"
+            customer.create()
+        customers = CustomerFactory.create_batch(3)
+        for customer in customers:
+            customer.gender = "FEMALE"
+            customer.create()
+        customers = CustomerFactory.create_batch(4)
+        for customer in customers:
+            customer.gender = "UNKNOWN"
+            customer.create()
+
+        response = self.client.get(f"{BASE_URL}?gender=MALE")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]['gender'], "MALE")
+
+    def test_get_customer_list_with_active_status(self):
+        """It should filter customers by active status"""
+        customers = CustomerFactory.create_batch(2)
+        for customer in customers:
+            customer.active = True
+            customer.create()
+        customers = CustomerFactory.create_batch(3)
+        for customer in customers:
+            customer.active = False
+            customer.create()
+
+        response = self.client.get(f"{BASE_URL}?active=true")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 2)
+
+        response = self.client.get(f"{BASE_URL}?active=false")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 3)
+
+    def test_get_customer_list_with_invalid_gender(self):
+        """It should return an error for invalid gender value"""
+        response = self.client.get(f"{BASE_URL}?gender=NOT_A_GENDER")
+        self.assertEqual(response.status_code, 400)
+        data = response.get_json()
+        self.assertIn("Invalid gender value", data["error"])
+
+    def test_get_customer_list_with_invalid_active(self):
+        """It should return an error for invalid active value"""
+        response = self.client.get(f"{BASE_URL}?active=not_a_boolean")
+        self.assertEqual(response.status_code, 400)
+        data = response.get_json()
+        self.assertIn("Invalid active value", data["error"])
+
     def test_update_customer(self):
         """It should Update an existing Customer"""
         # create a customer to update
