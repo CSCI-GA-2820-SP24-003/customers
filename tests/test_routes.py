@@ -11,6 +11,7 @@ from service.common import status
 from service.models import db, Customer
 from .customer_factory import CustomerFactory
 
+
 # from unittest.mock import patch
 
 
@@ -374,6 +375,26 @@ class TestCustomerService(TestCase):
         self.assertEqual(response.status_code, 415)
         self.assertIn("Unsupported media type", response.json["error"])
 
+    def test_activate_customer(self):
+        """It should Deactivate a Customer"""
+        test_customer_data = CustomerFactory().serialize()
+        test_customer_data["active"] = False
+
+        # Create customer via POST request
+        create_response = self.client.post(BASE_URL, json=test_customer_data)
+        self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
+        created_customer = create_response.get_json()
+
+        # Activate the customer via PUT request
+        response = self.client.put(f"{BASE_URL}/{created_customer['id']}/activate")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Fetch the customer to verify it's activated
+        get_response = self.client.get(f"{BASE_URL}/{created_customer['id']}")
+
+        activated_customer = get_response.get_json()
+        self.assertTrue(activated_customer["active"])
+
     def test_deactivate_customer(self):
         """It should Deactivate a Customer"""
         test_customer_data = CustomerFactory().serialize()
@@ -392,8 +413,14 @@ class TestCustomerService(TestCase):
         deactivated_customer = get_response.get_json()
         self.assertFalse(deactivated_customer["active"])
 
+    def test_activate_does_not_exist(self):
+        """It should return 404 if the customer does not exist"""
+        non_existent_customer_id = 999999
+        response = self.client.put(f"{BASE_URL}/{non_existent_customer_id}/activate")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_deactivate_nonexistent_customer(self):
         """It should return 404 for a nonexistent customer"""
-        nonexistent_customer_id = 99999  # Assuming this ID does not exist
+        nonexistent_customer_id = 99999
         response = self.client.put(f"{BASE_URL}/{nonexistent_customer_id}/deactivate")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

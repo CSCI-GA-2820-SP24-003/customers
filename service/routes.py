@@ -213,6 +213,26 @@ def update_customers(customer_id):
 
 
 ######################################################################
+# ACTIVATE A CUSTOMER
+######################################################################
+@app.route("/customers/<int:customer_id>/activate", methods=["PUT"])
+def activate_customer(customer_id):
+    """
+    Activate a customer
+    This endpoint will activate a customer based on the id specified in the path
+    """
+    customer = Customer.find(customer_id)
+    if not customer:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Customer with id '{customer_id}' was not found.",
+        )
+
+    customer.activate()
+    return jsonify(""), status.HTTP_204_NO_CONTENT
+
+
+######################################################################
 # DEACTIVATE A CUSTOMER
 ######################################################################
 @app.route("/customers/<int:customer_id>/deactivate", methods=["PUT"])
@@ -240,6 +260,7 @@ def deactivate_customer(customer_id):
 ######################################################################
 # Checks the ContentType of a request
 ######################################################################
+@app.route("/customers/<int:customer_id>/check_content_type", methods=["PUT"])
 def check_content_type(content_type):
     """Checks that the media type is correct"""
     if "Content-Type" not in request.headers:
