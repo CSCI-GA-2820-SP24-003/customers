@@ -32,6 +32,15 @@ def encrypt_password(password):
     return hashlib.sha256(password.encode("UTF-8")).hexdigest()
 
 
+############################################################
+# Health Endpoint
+############################################################
+@app.route("/health")
+def health():
+    """Health Status"""
+    return {"status": "OK"}, status.HTTP_200_OK
+
+
 ######################################################################
 # GET INDEX
 ######################################################################
@@ -157,8 +166,8 @@ def list_customers():
             value = request.args.get(param)
             query = query.filter(getattr(Customer, param) == value)
 
-    if 'gender' in request.args:
-        gender_value = request.args.get('gender').upper()
+    if "gender" in request.args:
+        gender_value = request.args.get("gender").upper()
         if gender_value in Gender.__members__:
             query = Customer.query_by_gender(Gender[gender_value])
         else:
