@@ -81,6 +81,13 @@ class TestCustomerService(TestCase):
     #  P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
 
+    def test_health(self):
+        """It should get the health endpoint"""
+        resp = self.client.get("/health")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data["status"], "OK")
+
     def test_index(self):
         """It should call the home page"""
         resp = self.client.get("/")
@@ -153,7 +160,7 @@ class TestCustomerService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['username'], 'user123')
+        self.assertEqual(data[0]["username"], "user123")
 
     def test_get_customer_list_with_email(self):
         """It should filter customers by email"""
@@ -165,7 +172,7 @@ class TestCustomerService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['email'], "123@gmail.com")
+        self.assertEqual(data[0]["email"], "123@gmail.com")
 
     def test_get_customer_list_with_first_name(self):
         """It should filter customers by first name"""
@@ -186,7 +193,7 @@ class TestCustomerService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 2)
-        self.assertEqual(data[0]['first_name'], "name123")
+        self.assertEqual(data[0]["first_name"], "name123")
 
     def test_get_customer_list_with_last_name(self):
         """It should filter customers by last name"""
@@ -207,7 +214,7 @@ class TestCustomerService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 2)
-        self.assertEqual(data[0]['last_name'], "name123")
+        self.assertEqual(data[0]["last_name"], "name123")
 
     def test_get_customer_list_with_address(self):
         """It should filter customers by address"""
@@ -228,7 +235,7 @@ class TestCustomerService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 2)
-        self.assertEqual(data[0]['address'], "123 Main St")
+        self.assertEqual(data[0]["address"], "123 Main St")
 
     def test_get_customer_list_with_gender(self):
         """It should filter customers by gender"""
@@ -249,7 +256,7 @@ class TestCustomerService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 2)
-        self.assertEqual(data[0]['gender'], "MALE")
+        self.assertEqual(data[0]["gender"], "MALE")
 
     def test_get_customer_list_with_active_status(self):
         """It should filter customers by active status"""
