@@ -38,12 +38,13 @@ def step_impl(context):
     """Make a call to the base URL"""
     context.driver.get(context.base_url)
     # Uncomment next line to take a screenshot of the web page
-    # context.driver.save_screenshot('home_page.png')
+    context.driver.save_screenshot('home_page.png')
 
 
 @then('I should see "{message}" in the title')
 def step_impl(context, message):
     """Check the document title for a message"""
+    WebDriverWait(context.driver, 10).until(EC.title_contains(message))
     assert message in context.driver.title
 
 
@@ -56,6 +57,9 @@ def step_impl(context, text_string):
 @when('I set the "{element_name}" to "{text_string}"')
 def step_impl(context, element_name, text_string):
     element_id = ID_PREFIX + element_name.lower().replace(" ", "_")
+    WebDriverWait(context.driver, 10).until(
+        EC.visibility_of_element_located((By.ID, element_id))
+    )
     element = context.driver.find_element(By.ID, element_id)
     element.clear()
     element.send_keys(text_string)
