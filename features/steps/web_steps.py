@@ -37,6 +37,9 @@ ID_PREFIX = "customer_"
 def step_impl(context):
     """Make a call to the base URL"""
     context.driver.get(context.base_url)
+    WebDriverWait(context.driver, 20).until( 
+        EC.presence_of_element_located((By.ID, 'known_element_id_after_load'))
+    )
     # Uncomment next line to take a screenshot of the web page
     context.driver.save_screenshot('home_page.png')
 
