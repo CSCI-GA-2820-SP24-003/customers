@@ -4,7 +4,7 @@ Feature: The customer service back-end
     So that I can keep track of all my customers
 
 Background:
-    Given the following pets
+    Given the following customers
         | Id         | Username | Password  | First_name | Last_name  | Gender   | Active | Address     | Email            |
         | 1          | kaite5   | doggy     | Kate       | Wexler     | MALE     | True   | New York    | h@gmail.com      |
         | 2          | gigi44   | yearly    | Gillian    | Laney      | FEMALE   | True   | California  | y@gmail.com      |
@@ -13,7 +13,7 @@ Background:
 
 Scenario: The server is running
     When I visit the "Home Page"
-    Then I should see "Customer Database" in the title
+    Then I should see "Customer DataBase" in the title
     And I should not see "404 Not Found"
 
 Scenario: Create a Customer
