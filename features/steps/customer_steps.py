@@ -30,17 +30,19 @@ HTTP_200_OK = 200
 HTTP_201_CREATED = 201
 HTTP_204_NO_CONTENT = 204
 
-@given('the following customers')
+
+@given('The following customers')
 def step_impl(context):
     """ Delete all Customers and load new ones """
 
     # List all of the pets and delete them one by one
     rest_endpoint = f"{context.base_url}/customers"
-    context.resp = requests.get(rest_endpoint)
-    assert(context.resp.status_code == HTTP_200_OK)
+    context.resp = requests.get(rest_endpoint, timeout=10)
+    assert context.resp.status_code == HTTP_200_OK
+
     for customer in context.resp.json():
-        context.resp = requests.delete(f"{rest_endpoint}/{customer['id']}")
-        assert(context.resp.status_code == HTTP_204_NO_CONTENT)
+        context.resp = requests.delete(f"{rest_endpoint}/{customer['id']}", timeout=10)
+        assert context.resp.status_code == HTTP_204_NO_CONTENT
 
     # load the database with new pets
     for row in context.table:
@@ -55,5 +57,5 @@ def step_impl(context):
             "address": row['address'],
             "email": row['email']
         }
-        context.resp = requests.post(rest_endpoint, json=payload)
-        assert(context.resp.status_code == HTTP_201_CREATED)
+        context.resp = requests.post(rest_endpoint, json=payload, timeout=10)
+        assert context.resp.status_code == HTTP_201_CREATED
