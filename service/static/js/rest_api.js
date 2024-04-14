@@ -6,16 +6,15 @@ $(function () {
 
     // Updates the form with data from the response
     function update_form_data(res) {
-        $("#customer_id").val(res.id);
         $("#customer_username").val(res.username);
         $("#customer_password").val(res.password);
         $("#customer_first_name").val(res.first_name);
         $("#customer_last_name").val(res.last_name);
         $("#customer_gender").val(res.gender);
         if (res.active == true) {
-            $("#customer_active").val("true");
+            $("#customer_active").val("True");
         } else {
-            $("#customer_active").val("false");
+            $("#customer_active").val("False");
         }
         $("#customer_address").val(res.address);
         $("#customer_email").val(res.email);
@@ -46,8 +45,8 @@ $(function () {
 
     $("#create-btn").click(function () {
 
-        let id = $("#customer_id").val();
         let username = $("#customer_username").val();
+        let password = $("#customer_password").val();
         let first_name = $("#customer_first_name").val();
         let last_name = $("#customer_last_name").val();
         let gender = $("#customer_gender").val();
@@ -57,8 +56,8 @@ $(function () {
         
 
         let data = {
-            "id": id,
             "username": username,
+            "password": password,
             "first_name": first_name,
             "last_name": last_name,
             "gender": gender,

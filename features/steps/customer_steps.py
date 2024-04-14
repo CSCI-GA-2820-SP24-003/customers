@@ -35,7 +35,7 @@ HTTP_204_NO_CONTENT = 204
 def step_impl(context):
     """ Delete all Customers and load new ones """
 
-    # List all of the pets and delete them one by one
+    # List all of the customers and delete them one by one
     rest_endpoint = f"{context.base_url}/customers"
     context.resp = requests.get(rest_endpoint, timeout=10)
     assert context.resp.status_code == HTTP_200_OK
@@ -44,7 +44,7 @@ def step_impl(context):
         context.resp = requests.delete(f"{rest_endpoint}/{customer['id']}", timeout=10)
         assert context.resp.status_code == HTTP_204_NO_CONTENT
 
-    # load the database with new pets
+    # load the database with new customers
     for row in context.table:
         payload = {
             "id": row['id'],

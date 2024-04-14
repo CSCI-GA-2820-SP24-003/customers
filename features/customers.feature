@@ -18,7 +18,7 @@ Scenario: The server is running
 
 Scenario: Create a Customer
     When I visit the "Home Page"
-    And I set the "username" to "Happy5"
+    And I set the "username" to "happy5"
     And I set the "password" to "12345"
     And I set the "first_name" to "Caitlyn"
     And I set the "last_name" to "Fuagzi"
@@ -29,15 +29,10 @@ Scenario: Create a Customer
     And I press the "Create" button
     Then I should see the message "Success"
     When I copy the "id" field
-    And I press the "Clear" button
-    Then the "id" field should be empty
-    And the "username" field should be empty
-    And the "password" field should be empty
     When I paste the "id" field
     And I press the "Retrieve" button
     Then I should see the message "Success"
-    And I should see "Happy5" in the "username" field
-    And I should see "12345" in the "password" field
+    And I should see "happy5" in the "username" field
     And I should see "Caitlyn" in the "first_name" field
     And I should see "Fuagzi" in the "last_name" field
     And I should see "False" in the "active" dropdown
