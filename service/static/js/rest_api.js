@@ -84,4 +84,48 @@ $(function () {
             flash_message(res.responseJSON.message)
         });
     });
+
+// ****************************************
+// List all Customers
+// ****************************************
+
+$("#list-btn").click(function () {
+    $("#flash_message").empty();
+
+    let ajax = $.ajax({
+        type: "GET",
+        url: "/customers", // Adjust the URL to match your API endpoint for fetching customers
+        contentType: "application/json",
+        data: ''
+    });
+
+    ajax.done(function (res) {
+        $("#search_results").empty();
+        let table = '<table class="table table-striped" cellpadding="10">'
+        table += '<thead><tr>'
+        table += '<th class="col-md-2">ID</th>'
+        table += '<th class="col-md-2">Username</th>'
+        table += '<th class="col-md-2">First Name</th>'
+        table += '<th class="col-md-2">Last Name</th>'
+        table += '<th class="col-md-2">Email</th>'
+        table += '<th class="col-md-2">Active</th>'
+        table += '</tr></thead><tbody>'
+        let firstCustomer = "";
+        for (let i = 0; i < res.length; i++) {
+            let customer = res[i];
+            table += `<tr id="row_${i}"><td>${customer.id}</td><td>${customer.username}</td><td>${customer.first_name}</td><td>${customer.last_name}</td><td>${customer.email}</td><td>${customer.active}</td></tr>`;
+            if (i == 0) {
+                firstCustomer = customer;
+            }
+        }
+        table += '</tbody></table>';
+        $("#search_results").append(table);
+
+        flash_message("Success")
+    });
+
+    ajax.fail(function (res) {
+        flash_message(res.responseJSON.message)
+    });
+});
 })
