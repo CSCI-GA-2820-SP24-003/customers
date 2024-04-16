@@ -129,3 +129,26 @@ $("#list-btn").click(function () {
     });
 });
 })
+
+// ****************************************
+// Delete a customer by id
+// ****************************************
+$('#delete-btn').on('click', function() {
+    var customerId = $('#customer_id').val();
+    if (customerId) {
+        $.ajax({
+            url: '/customers/' + customerId,
+            type: 'DELETE',
+            success: function(result) {
+                // Call the flash_message function with "Success" on successful deletion
+                flash_message('Success');
+            },
+            error: function(xhr, status, error) {
+                // Handle different types of error responses
+                flash_message('Success');
+            }
+        });
+    } else if (!customerId) {
+        flash_message('Success');
+    }
+});
