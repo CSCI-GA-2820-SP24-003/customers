@@ -39,3 +39,12 @@ Scenario: Create a Customer
     And I should see "Male" in the "gender" dropdown
     And I should see "North Dakota" in the "address" field
     And I should see "cait@gmail.com" in the "email" field
+
+Scenario: List all Customers
+    When I visit the "Home Page"
+    And I press the "List" button
+    Then I should see the message "Success"
+    And I should see "kaite5" in the results
+    And I should see "gigi44" in the results
+    And I should see "lion15" in the results
+    And I should see "natedog" in the results
