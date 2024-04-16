@@ -48,3 +48,10 @@ Scenario: List all Customers
     And I should see "gigi44" in the results
     And I should see "lion15" in the results
     And I should see "natedog" in the results
+
+@view_customer_details
+Scenario: View details of a customer
+    When I visit the "Home Page"
+    And I press the "List" button
+    And I press the "View Details" button for the first customer
+    Then I should see all details for the customer in a modal
