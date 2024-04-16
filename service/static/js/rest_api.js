@@ -111,13 +111,27 @@ $("#list-btn").click(function () {
         table += '<th class="col-md-2">Active</th>'
         table += '</tr></thead><tbody>'
         let firstCustomer = "";
+        // for (let i = 0; i < res.length; i++) {
+        //     let customer = res[i];
+        //     table += `<tr id="row_${i}"><td>${customer.id}</td><td>${customer.username}</td><td>${customer.first_name}</td><td>${customer.last_name}</td><td>${customer.email}</td><td>${customer.active}</td></tr>`;
+        //     if (i == 0) {
+        //         firstCustomer = customer;
+        //     }
+        // }
+
         for (let i = 0; i < res.length; i++) {
             let customer = res[i];
-            table += `<tr id="row_${i}"><td>${customer.id}</td><td>${customer.username}</td><td>${customer.first_name}</td><td>${customer.last_name}</td><td>${customer.email}</td><td>${customer.active}</td></tr>`;
-            if (i == 0) {
-                firstCustomer = customer;
-            }
+            table += `<tr id="row_${customer.id}" class="customer-row" data-customer-id="${customer.id}">
+                <td>${customer.id}</td>
+                <td>${customer.username}</td>
+                <td>${customer.first_name}</td>
+                <td>${customer.last_name}</td>
+                <td>${customer.email}</td>
+                <td>${customer.active}</td>
+                <td><button class="btn btn-info view-details-btn" data-customer-id="${customer.id}">View Details</button></td>
+            </tr>`;
         }
+
         table += '</tbody></table>';
         $("#search_results").append(table);
 
@@ -129,6 +143,7 @@ $("#list-btn").click(function () {
     });
 });
 })
+
 
 // ****************************************
 // Delete a customer by id
@@ -152,3 +167,37 @@ $('#delete-btn').on('click', function() {
         flash_message('Success');
     }
 });
+
+
+// Event Listener for 'View Details' Button Clicks
+$(document).on('click', '.view-details-btn', function() {
+    var customerId = $(this).data('customer-id');
+    fetchCustomerDetails(customerId);
+});
+
+// The function fetchCustomerDetails should send an AJAX request to your server to retrieve customer data and then display it in the modal
+function fetchCustomerDetails(customerId) {
+    $.ajax({
+        type: "GET",
+        url: "/customers/" + customerId,
+        contentType: "application/json",
+        success: function(response) {
+            // Assuming 'response' is the customer data
+            $('#detail-id').text(response.id);
+            $('#detail-username').text(response.username);
+            $('#detail-first-name').text(response.first_name);
+            $('#detail-last-name').text(response.last_name);
+
+            $('#detail-gender').text(response.gender);
+            $('#detail-active').text(response.active ? 'True' : 'False');
+            $('#detail-address').text(response.address);
+            $('#detail-email').text(response.email);
+            // Show the modal
+            $('#customerDetailsModal').modal('show');
+        },
+        error: function(xhr) {
+            flash_message('Error: ' + xhr.responseJSON.message);
+        }
+    });
+}
+
