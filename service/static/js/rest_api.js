@@ -214,6 +214,16 @@ $('#delete-btn').on('click', function() {
         });
     });
 
+    // ****************************************
+    // Clear the form
+    // ****************************************
+
+    $("#clear-btn").click(function () {
+        $("#id").val("");
+        $("#flash_message").empty();
+        clear_form_data()
+    });
+
 
 // Event Listener for 'View Details' Button Clicks
 $(document).on('click', '.view-details-btn', function() {
