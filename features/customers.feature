@@ -11,10 +11,13 @@ Background:
         | 3          | lion15   | friend1   | John       | Smith      | MALE     | False  | Texas       | hi@gmail.com     |
         | 4          | natedog  | nathan5   | Nathan     | Rocke      | UNKNOWN  | True   | Wisconsin   | you@yahoo.com    |
 
+
 Scenario: The server is running
     When I visit the "Home Page"
     Then I should see "Customer DataBase" in the title
     And I should not see "404 Not Found"
+
+
 
 Scenario: Create a Customer
     When I visit the "Home Page"
