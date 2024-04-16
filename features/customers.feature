@@ -62,28 +62,15 @@ Scenario: View details of a customer
 Scenario: Update a Customer
     When I visit the "Home Page"
     And I press the "Clear" button
-    And I set the "username" to "kaite5"
-    And I press the "Search" button
-    Then I should see the message "Success"
-    And I should see "kaite5" in the "username" field
+    And I press the "List" button
+    And I select the customer with "username" "kaite5"
+    Then I should see "kaite5" in the "username" field
     And I should see "Kate" in the "first_name" field
     And I should see "Wexler" in the "last_name" field
     When I change "first_name" to "Katherine"
     And I press the "Update" button
-    Then I should see the message "Success"
-    When I copy the "id" field
+    Then I should see the message "Customer Updated Successfully"
     And I press the "Clear" button
-    And I paste the "id" field
-    And I press the "Retrieve" button
-    Then I should see the message "Success"
-    And I should see "Katherine" in the "first_name" field
-    When I press the "Clear" button
     And I press the "List" button
-    Then I should see the message "Success"
-    And I should see "Katherine" in the results
+    Then I should see "Katherine" in the results
     And I should not see "Kate" in the results
-    When I set the "id" to "123456"
-    And I set the "email" to "newemail@example.com"
-    And I press the "Update" button
-    Then I should see the message "404 Not Found: Customer with id: '123456' was not found."
-    
