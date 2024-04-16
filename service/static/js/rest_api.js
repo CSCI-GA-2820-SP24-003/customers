@@ -94,7 +94,7 @@ $("#list-btn").click(function () {
 
     let ajax = $.ajax({
         type: "GET",
-        url: "/customers", // Adjust the URL to match your API endpoint for fetching customers
+        url: "/customers",
         contentType: "application/json",
         data: ''
     });
@@ -167,6 +167,52 @@ $('#delete-btn').on('click', function() {
         flash_message('Success');
     }
 });
+
+    // ****************************************
+    // Update a Customer
+    // ****************************************
+
+    $("#update-btn").click(function () {
+
+        let customer_id = $("#customer_id").val();
+        let username = $("#customer_username").val();
+        let password = $("#customer_password").val();
+        let first_name = $("#customer_first_name").val();
+        let last_name = $("#customer_last_name").val();
+        let gender = $("#customer_gender").val();
+        let active = $("#customer_active").val() == "true";
+        let address = $("#customer_address").val();
+        let email = $("#customer_email").val();
+    
+        let data = {
+            "username": username,
+            "password": password,
+            "first_name": first_name,
+            "last_name": last_name,
+            "gender": gender,
+            "active": active,
+            "address": address,
+            "email": email
+        };
+    
+        $("#flash_message").empty();
+    
+        let ajax = $.ajax({
+            type: "PUT",
+            url: `/customers/${customer_id}`,
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Customer Updated Successfully")
+        });
+    
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+    });
 
 
 // Event Listener for 'View Details' Button Clicks
