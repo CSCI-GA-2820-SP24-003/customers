@@ -156,11 +156,18 @@ class TestCustomerService(TestCase):
         CustomerFactory(username="user456").create()
         CustomerFactory(username="user789").create()
 
-        response = self.client.get(f"{BASE_URL}?username=user123")
+        # Exact search
+        response = self.client.get(f'{BASE_URL}?username="user123"')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["username"], "user123")
+
+        # Fuzzy search
+        response = self.client.get(f"{BASE_URL}?username=User")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 3)
 
     def test_get_customer_list_with_email(self):
         """It should filter customers by email"""
@@ -173,6 +180,19 @@ class TestCustomerService(TestCase):
         data = response.get_json()
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["email"], "123@gmail.com")
+
+        # Exact search
+        response = self.client.get(f'{BASE_URL}?email="123@gmail.com"')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["email"], "123@gmail.com")
+
+        # Fuzzy search
+        response = self.client.get(f"{BASE_URL}?email=Gmail")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 3)
 
     def test_get_customer_list_with_first_name(self):
         """It should filter customers by first name"""

@@ -143,12 +143,7 @@ def list_customers():
     #     query = Customer.query_by_address(request.args.get('address'))
 
     # dynamic querying
-    for param in ["username", "email"]:
-        if param in request.args:
-            value = request.args.get(param)
-            query = query.filter(getattr(Customer, param) == value)
-
-    for param in ["address", "first_name", "last_name"]:
+    for param in ["username", "email", "address", "first_name", "last_name"]:
         if param in request.args:
             value = request.args.get(param)
             if value.startswith('"') and value.endswith('"'):
