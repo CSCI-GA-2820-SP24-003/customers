@@ -52,9 +52,15 @@ Scenario: List all Customers
     And I should see "lion15" in the results
     And I should see "natedog" in the results
 
-@view_customer_details
 Scenario: View details of a customer
     When I visit the "Home Page"
     And I press the "List" button
     And I press the "View Details" button for the first customer
     Then I should see all details for the customer in a modal
+
+Scenario: Delete a Customer and Verify Absence from List
+    When I visit the "Home Page"
+    When I find the ID for "kaite5" and delete the customer
+    When I press the "List" button
+    Then I should see the message "Success"
+    Then I should not see "kaite5" in the results
