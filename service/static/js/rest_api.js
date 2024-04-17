@@ -50,7 +50,7 @@ $(function () {
         let first_name = $("#customer_first_name").val();
         let last_name = $("#customer_last_name").val();
         let gender = $("#customer_gender").val();
-        let active = $("#customer_active").val() == "true";
+        let active = $("#customer_active").val();
         let address = $("#customer_address").val();
         let email = $("#customer_email").val();
         
@@ -155,19 +155,40 @@ $('#delete-btn').on('click', function() {
             url: '/customers/' + customerId,
             type: 'DELETE',
             success: function(result) {
-                // Call the flash_message function with "Success" on successful deletion
-                flash_message('Success');
+                flash_message('Success');  
             },
             error: function(xhr, status, error) {
-                // Handle different types of error responses
-                flash_message('Success');
+                flash_message('Error deleting customer: ' + (error || 'Unknown error'));
             }
         });
-    } else if (!customerId) {
-        flash_message('Success');
+    } else {
+        flash_message('No customer ID provided');
     }
 });
 
+// ****************************************
+// Retrieve a customer by id
+// ****************************************
+$('#retrieve-btn').on('click', function() {
+    var customerId = $('#customer_id').val();
+    if (customerId) {
+        $.ajax({
+            url: '/customers/' + customerId,
+            type: 'GET',
+            contentType: "application/json",
+            success: function(response) {
+                update_form_data(response);  // This function will populate the form with the customer data
+                flash_message('Customer retrieved successfully');
+            },
+            error: function(xhr) {
+                var errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Unknown error';
+                flash_message('Error retrieving customer: ' + errorMessage);
+            }
+        });
+    } else {
+        flash_message('Please provide a customer ID');
+    }
+});
 
 // Event Listener for 'View Details' Button Clicks
 $(document).on('click', '.view-details-btn', function() {
@@ -182,7 +203,6 @@ function fetchCustomerDetails(customerId) {
         url: "/customers/" + customerId,
         contentType: "application/json",
         success: function(response) {
-            // Assuming 'response' is the customer data
             $('#detail-id').text(response.id);
             $('#detail-username').text(response.username);
             $('#detail-first-name').text(response.first_name);
@@ -192,7 +212,6 @@ function fetchCustomerDetails(customerId) {
             $('#detail-active').text(response.active ? 'True' : 'False');
             $('#detail-address').text(response.address);
             $('#detail-email').text(response.email);
-            // Show the modal
             $('#customerDetailsModal').modal('show');
         },
         error: function(xhr) {

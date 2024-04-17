@@ -175,15 +175,10 @@ def step_impl(context, element_name, text_string):
     element.send_keys(text_string)
 
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
-
 @when('I press the "View Details" button for the first customer')
 def step_impl(context):
     button = WebDriverWait(context.driver, 10).until(
-        EC.visibility_of_element_located((By.CSS_SELECTOR, ".view-details-btn"))
+        expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".view-details-btn"))
     )
     button.click()
 
@@ -191,11 +186,10 @@ def step_impl(context):
 @then("I should see all details for the customer in a modal")
 def step_impl(context):
     WebDriverWait(context.driver, 10).until(
-        EC.visibility_of_element_located((By.ID, "customerDetailsModal"))
+        expected_conditions.visibility_of_element_located((By.ID, "customerDetailsModal"))
     )
     modal = context.driver.find_element(By.ID, "customerDetailsModal")
     assert modal.is_displayed(), "Modal is not displayed"
-    # Check for specific fields within the modal
     details = [
         "detail-username",
         "detail-first-name",
@@ -208,7 +202,46 @@ def step_impl(context):
         ), f"{detail} is empty"
 
 
-@when("I am on the customer list page")
-def step_impl(context):
-    context.driver.get(context.base_url + "/path-to-customer-list")
-    # Assuming the list page is part of the main home page, modify as necessary
+@when('I set the "customer_id" field to "{customer_id}"')
+def step_impl(context, customer_id):
+    input_field = context.driver.find_element(By.ID, 'customer_id')
+    input_field.clear()
+    input_field.send_keys(customer_id)
+
+@when('I try to retrieve the customer with the ID "{customer_id}"')
+def step_impl(context, customer_id):
+    input_field = context.driver.find_element(By.ID, 'customer_id')
+    input_field.clear()
+    input_field.send_keys(customer_id)
+    context.driver.find_element(By.ID, 'retrieve-btn').click()
+
+@when('I delete the customer with ID "{customer_id}"')
+def step_impl(context, customer_id):
+    context.driver.find_element(By.ID, 'customer_id').send_keys(customer_id)
+    context.driver.find_element(By.ID, 'delete-btn').click()
+
+@when('I find the ID for "{username}" and delete the customer')
+def step_impl(context, username):
+    context.driver.find_element(By.ID, 'list-btn').click()
+    try:
+        WebDriverWait(context.driver, 20).until(
+            expected_conditions.presence_of_element_located((By.ID, 'search_results'))
+        )
+        print("Search results are visible.")
+    except TimeoutException:
+        print("Failed to find the search results within the timeout period.")
+        raise
+    
+    rows = context.driver.find_elements(By.CSS_SELECTOR, "#search_results tr")
+    print(f"Found {len(rows)} rows in search results.")
+    customer_id = None
+    for row in rows:
+        cells = row.find_elements(By.TAG_NAME, "td")
+        if cells and cells[1].text == username:
+            customer_id = cells[0].text
+            break
+    if customer_id:
+        context.driver.find_element(By.ID, 'customer_id').send_keys(customer_id)
+        context.driver.find_element(By.ID, 'delete-btn').click()
+    else:
+        raise Exception(f"Customer with username {username} not found")
