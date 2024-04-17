@@ -50,7 +50,7 @@ $(function () {
         let first_name = $("#customer_first_name").val();
         let last_name = $("#customer_last_name").val();
         let gender = $("#customer_gender").val();
-        let active = $("#customer_active").val();
+        let active = $("#customer_active").val() == "True";
         let address = $("#customer_address").val();
         let email = $("#customer_email").val();
         
