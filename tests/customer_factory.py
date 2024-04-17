@@ -30,7 +30,7 @@ class CustomerFactory(factory.Factory):
         model = Customer
 
     id = factory.Sequence(lambda n: n)
-    username = FuzzyChoice(choices=["admin", "user123", "user345", "user456"])
+    username = factory.Sequence(lambda n: f"user{n}")
     password = secrets.token_hex(8)
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")

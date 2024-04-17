@@ -130,6 +130,28 @@ class TestCustomer(TestCase):
         customer = Customer.all()
         self.assertEqual(len(customer), 1)
 
+    def test_create_with_duplicate_username(self):
+        """It should not create a customer with a duplicate username"""
+        customer1 = CustomerFactory(username="user123", email="123@example.com")
+        customer1.create()
+
+        customer2 = CustomerFactory(username="user123", email="456@example.com")  
+        with self.assertRaises(DataValidationError) as context:
+            customer2.create()
+
+        self.assertIn('Username user123 is already in use', str(context.exception))
+
+    def test_create_with_duplicate_email(self):
+        """It should not create a customer with a duplicate email"""
+        customer1 = CustomerFactory(username="user123", email="123@example.com")
+        customer1.create()
+
+        customer2 = CustomerFactory(username="user456", email="123@example.com")  
+        with self.assertRaises(DataValidationError) as context:
+            customer2.create()
+
+        self.assertIn('Email 123@example.com is already in use', str(context.exception))
+
     def test_read_a_customer(self):
         """It should Read a customer"""
         customer = CustomerFactory()
@@ -197,6 +219,32 @@ class TestCustomer(TestCase):
 
             # Assert db.session.rollback is called after an exception
             mock_commit.assert_called_once()
+
+    def test_update_with_duplicate_username(self):
+        """It should not create a customer with a duplicate username"""
+        CustomerFactory(username="user123").create()
+        
+        customer2 = CustomerFactory(username="user456")
+        customer2.create()
+
+        customer2.username = "user123"
+        with self.assertRaises(DataValidationError) as context:
+            customer2.update()
+
+        self.assertIn('Username already exists with another account', str(context.exception))
+
+    def test_update_with_duplicate_email(self):
+        """It should not create a customer with a duplicate email"""
+        CustomerFactory(email="123@example.com").create()
+        
+        customer2 = CustomerFactory(email="456@example.com")
+        customer2.create()
+
+        customer2.email = "123@example.com"
+        with self.assertRaises(DataValidationError) as context:
+            customer2.update()
+
+        self.assertIn('Email already exists with another account', str(context.exception))
 
     def test_delete_a_customer(self):
         """It should Delete a Customer"""

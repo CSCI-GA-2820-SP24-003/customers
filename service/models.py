@@ -63,6 +63,13 @@ class Customer(db.Model):
         """
         Creates a Customer to the database
         """
+
+        # id is checked by database itself
+        if Customer.query.filter_by(username=self.username).first():
+            raise DataValidationError(f"Username {self.username} is already in use.")
+        if Customer.query.filter_by(email=self.email).first():
+            raise DataValidationError(f"Email {self.email} is already in use.")
+
         logger.info("Creating %s", self.first_name)
         self.id = None  # pylint: disable=invalid-name
         self.password = encrypt_password(self.password)
@@ -78,6 +85,16 @@ class Customer(db.Model):
         """
         Updates a Customer to the database
         """
+        existing_user = Customer.query.filter(
+            (Customer.username == self.username) | (Customer.email == self.email),
+            Customer.id != self.id).first()
+        
+        if existing_user:
+            if existing_user.username == self.username:
+                raise DataValidationError("Username already exists with another account")
+            if existing_user.email == self.email:
+                raise DataValidationError("Email already exists with another account")
+        
         logger.info("Saving %s", self.first_name)
         if self.id is None:
             raise DataValidationError("There is no valid ID Specified")
