@@ -156,11 +156,18 @@ class TestCustomerService(TestCase):
         CustomerFactory(username="user456").create()
         CustomerFactory(username="user789").create()
 
-        response = self.client.get(f"{BASE_URL}?username=user123")
+        # Exact search
+        response = self.client.get(f'{BASE_URL}?username="user123"')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["username"], "user123")
+
+        # Fuzzy search
+        response = self.client.get(f"{BASE_URL}?username=User")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 3)
 
     def test_get_customer_list_with_email(self):
         """It should filter customers by email"""
@@ -173,6 +180,19 @@ class TestCustomerService(TestCase):
         data = response.get_json()
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["email"], "123@gmail.com")
+
+        # Exact search
+        response = self.client.get(f'{BASE_URL}?email="123@gmail.com"')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["email"], "123@gmail.com")
+
+        # Fuzzy search
+        response = self.client.get(f"{BASE_URL}?email=Gmail")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 3)
 
     def test_get_customer_list_with_first_name(self):
         """It should filter customers by first name"""
@@ -189,11 +209,18 @@ class TestCustomerService(TestCase):
             customer.first_name = "name789"
             customer.create()
 
-        response = self.client.get(f"{BASE_URL}?first_name=name123")
+        # Exact search
+        response = self.client.get(f'{BASE_URL}?first_name="name123"')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]["first_name"], "name123")
+
+        # Fuzzy search
+        response = self.client.get(f"{BASE_URL}?first_name=Name")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 9)
 
     def test_get_customer_list_with_last_name(self):
         """It should filter customers by last name"""
@@ -210,11 +237,18 @@ class TestCustomerService(TestCase):
             customer.last_name = "name789"
             customer.create()
 
-        response = self.client.get(f"{BASE_URL}?last_name=name123")
+        # Exact search
+        response = self.client.get(f'{BASE_URL}?last_name="name123"')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]["last_name"], "name123")
+
+        # Fuzzy search
+        response = self.client.get(f"{BASE_URL}?last_name=Name")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 9)
 
     def test_get_customer_list_with_address(self):
         """It should filter customers by address"""
@@ -231,11 +265,18 @@ class TestCustomerService(TestCase):
             customer.address = "789 Main St"
             customer.create()
 
-        response = self.client.get(f"{BASE_URL}?address=123 Main St")
+        # Exact search
+        response = self.client.get(f'{BASE_URL}?address="123 Main St"')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]["address"], "123 Main St")
+
+        # Fuzzy search
+        response = self.client.get(f"{BASE_URL}?address=main st")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 9)
 
     def test_get_customer_list_with_gender(self):
         """It should filter customers by gender"""

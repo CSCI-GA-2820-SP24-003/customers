@@ -143,10 +143,16 @@ def list_customers():
     #     query = Customer.query_by_address(request.args.get('address'))
 
     # dynamic querying
-    for param in ["username", "email", "first_name", "last_name", "address"]:
+    for param in ["username", "email", "address", "first_name", "last_name"]:
         if param in request.args:
             value = request.args.get(param)
-            query = query.filter(getattr(Customer, param) == value)
+            if value.startswith('"') and value.endswith('"'):
+                # Exact search
+                exact_value = value[1:-1]
+                query = query.filter(getattr(Customer, param) == exact_value)
+            else:
+                # Fuzzy search
+                query = query.filter(getattr(Customer, param).ilike(f"%{value}%"))
 
     if "gender" in request.args:
         gender_value = request.args.get("gender").upper()
