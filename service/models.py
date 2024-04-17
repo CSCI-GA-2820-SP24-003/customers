@@ -88,13 +88,13 @@ class Customer(db.Model):
         existing_user = Customer.query.filter(
             (Customer.username == self.username) | (Customer.email == self.email),
             Customer.id != self.id).first()
-        
+
         if existing_user:
             if existing_user.username == self.username:
                 raise DataValidationError("Username already exists with another account")
             if existing_user.email == self.email:
                 raise DataValidationError("Email already exists with another account")
-        
+
         logger.info("Saving %s", self.first_name)
         if self.id is None:
             raise DataValidationError("There is no valid ID Specified")

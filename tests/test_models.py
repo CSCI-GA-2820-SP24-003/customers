@@ -135,7 +135,7 @@ class TestCustomer(TestCase):
         customer1 = CustomerFactory(username="user123", email="123@example.com")
         customer1.create()
 
-        customer2 = CustomerFactory(username="user123", email="456@example.com")  
+        customer2 = CustomerFactory(username="user123", email="456@example.com")
         with self.assertRaises(DataValidationError) as context:
             customer2.create()
 
@@ -146,7 +146,7 @@ class TestCustomer(TestCase):
         customer1 = CustomerFactory(username="user123", email="123@example.com")
         customer1.create()
 
-        customer2 = CustomerFactory(username="user456", email="123@example.com")  
+        customer2 = CustomerFactory(username="user456", email="123@example.com")
         with self.assertRaises(DataValidationError) as context:
             customer2.create()
 
@@ -223,7 +223,7 @@ class TestCustomer(TestCase):
     def test_update_with_duplicate_username(self):
         """It should not create a customer with a duplicate username"""
         CustomerFactory(username="user123").create()
-        
+
         customer2 = CustomerFactory(username="user456")
         customer2.create()
 
@@ -236,7 +236,7 @@ class TestCustomer(TestCase):
     def test_update_with_duplicate_email(self):
         """It should not create a customer with a duplicate email"""
         CustomerFactory(email="123@example.com").create()
-        
+
         customer2 = CustomerFactory(email="456@example.com")
         customer2.create()
 
