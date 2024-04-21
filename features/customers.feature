@@ -93,7 +93,6 @@ Scenario: Delete a Customer and Verify Absence from List
     When I copy the "id" field
     And I press the "Delete" button
     Then I should see the message "Customer has been Deleted!"
-    When I press the "Clear" button
-    And I press the "Search" button
+    When I press the "Search" button
     Then I should see the message "Success"
     And I should not see "kaite5" in the results
