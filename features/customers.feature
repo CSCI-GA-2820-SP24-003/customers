@@ -61,7 +61,7 @@ Scenario: List all Customers
 
 Scenario: View details of a customer
     When I visit the "Home Page"
-    And I press the "List" button
+    And I press the "Search" button
     And I press the "View Details" button for the first customer
     Then I should see all details for the customer in a modal
 
@@ -86,7 +86,14 @@ Scenario: Search for active
 
 Scenario: Delete a Customer and Verify Absence from List
     When I visit the "Home Page"
-    When I find the ID for "kaite5" and delete the customer
-    When I press the "List" button
+    And I set the "username" to "kaite5"
+    And I press the "Search" button
     Then I should see the message "Success"
-    Then I should not see "kaite5" in the results
+    And I should see "kaite5" in the "username" field
+    When I copy the "id" field
+    And I press the "Delete" button
+    Then I should see the message "Customer has been Deleted!"
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should not see "kaite5" in the results
