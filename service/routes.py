@@ -157,7 +157,7 @@ def list_customers():
     if "gender" in request.args:
         gender_value = request.args.get("gender").upper()
         if gender_value in Gender.__members__:
-            query = Customer.query_by_gender(Gender[gender_value])
+            query = query.filter(getattr(Customer, "gender") == Gender[gender_value])
         else:
             return jsonify({"error": "Invalid gender value"}), 400
 
