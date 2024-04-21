@@ -177,24 +177,28 @@ $(function () {
     // ****************************************
     // Delete a customer by id
     // ****************************************
-    $('#delete-btn').on('click', function () {
-        var customerId = $('#customer_id').val();
-        if (customerId) {
-            $.ajax({
-                url: '/customers/' + customerId,
-                type: 'DELETE',
-                success: function (result) {
-                    // Call the flash_message function with "Success" on successful deletion
-                    flash_message('Success');
-                },
-                error: function (xhr, status, error) {
-                    // Handle different types of error responses
-                    flash_message('Success');
-                }
-            });
-        } else if (!customerId) {
-            flash_message('Success');
-        }
+
+    $("#delete-btn").click(function () {
+
+        let customer_id = $("#customer_id").val();
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "DELETE",
+            url: `/customers/${customer_id}`,
+            contentType: "application/json",
+            data: '',
+        })
+
+        ajax.done(function(res){
+            clear_form_data()
+            flash_message("Customer has been Deleted!")
+        });
+
+        ajax.fail(function(res){
+            flash_message("Server error!")
+        });
     });
 
 
@@ -333,10 +337,18 @@ $(function () {
                 <td>${customer.active}</td>
                 <td><button class="btn btn-info view-details-btn" data-customer-id="${customer.id}">View Details</button></td>
             </tr>`;
+                if (i == 0) {
+                    firstCustomer = customer;
+                }
             }
 
             table += '</tbody></table>';
             $("#search_results").append(table);
+
+            // copy the first result to the form
+            if (firstCustomer != "") {
+                update_form_data(firstCustomer)
+            }
 
             flash_message("Success")
         });
