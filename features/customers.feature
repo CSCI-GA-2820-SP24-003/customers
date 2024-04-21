@@ -57,7 +57,7 @@ Scenario: View details of a customer
 
 Scenario: Search for females
     When I visit the "Home Page"
-    And I set the "Gender" to "FEMALE"
+    And I set the "Gender" to "Female"
     And I press the "Search" button
     Then I should see the message "Success"
     And I should see "gigi44" in the results
