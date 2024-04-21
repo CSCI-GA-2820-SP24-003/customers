@@ -57,7 +57,7 @@ Scenario: View details of a customer
 
 Scenario: Search for females
     When I visit the "Home Page"
-    And I set the "Gender" to "Female"
+    And I select "Female" in the "gender" dropdown
     And I press the "Search" button
     Then I should see the message "Success"
     And I should see "gigi44" in the results
@@ -66,7 +66,7 @@ Scenario: Search for females
 
 Scenario: Search for active
     When I visit the "Home Page"
-    And I select "True" in the "Active" dropdown
+    And I select "True" in the "active" dropdown
     And I press the "Search" button
     Then I should see the message "Success"
     And I should see "kaite5" in the results
