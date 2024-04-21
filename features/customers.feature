@@ -29,6 +29,16 @@ Scenario: Create a Customer
     And I press the "Create" button
     Then I should see the message "Success"
     When I copy the "id" field
+    And I press the "Clear" button
+    Then the "id" field should be empty
+    And the "username" field should be empty
+    And the "password" field should be empty
+    And the "first_name" field should be empty
+    And the "last_name" field should be empty
+    And the "active" field should be empty
+    And the "gender" field should be empty
+    And the "address" field should be empty
+    And the "email" field should be empty
     When I paste the "id" field
     And I press the "Retrieve" button
     Then I should see the message "Success"
@@ -42,7 +52,7 @@ Scenario: Create a Customer
 
 Scenario: List all Customers
     When I visit the "Home Page"
-    And I press the "List" button
+    And I press the "Search" button
     Then I should see the message "Success"
     And I should see "kaite5" in the results
     And I should see "gigi44" in the results

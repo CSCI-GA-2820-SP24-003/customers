@@ -230,6 +230,16 @@ $(function () {
         });
     }
 
+    // ****************************************
+    // Clear the form
+    // ****************************************
+
+    $("#clear-btn").click(function () {
+        $("#customer_id").val("");
+        $("#flash_message").empty();
+        clear_form_data()
+    });
+
 
     $("#search-btn").click(function () {
 
