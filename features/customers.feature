@@ -73,3 +73,10 @@ Scenario: Search for active
     And I should see "gigi44" in the results
     And I should see "natedog" in the results
     And I should not see "lion15" in the results
+
+Scenario: Delete a Customer and Verify Absence from List
+    When I visit the "Home Page"
+    When I find the ID for "kaite5" and delete the customer
+    When I press the "List" button
+    Then I should see the message "Success"
+    Then I should not see "kaite5" in the results
