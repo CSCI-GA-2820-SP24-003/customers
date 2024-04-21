@@ -6,6 +6,7 @@ $(function () {
 
     // Updates the form with data from the response
     function update_form_data(res) {
+        $("#customer_id").val(res.id);
         $("#customer_username").val(res.username);
         $("#customer_password").val(res.password);
         $("#customer_first_name").val(res.first_name);
@@ -53,7 +54,7 @@ $(function () {
         let active = $("#customer_active").val() == "True";
         let address = $("#customer_address").val();
         let email = $("#customer_email").val();
-        
+
 
         let data = {
             "username": username,
@@ -67,7 +68,7 @@ $(function () {
         };
 
         $("#flash_message").empty();
-        
+
         let ajax = $.ajax({
             type: "POST",
             url: "/customers",
@@ -75,53 +76,53 @@ $(function () {
             data: JSON.stringify(data),
         });
 
-        ajax.done(function(res){
+        ajax.done(function (res) {
             update_form_data(res)
             flash_message("Success")
         });
 
-        ajax.fail(function(res){
+        ajax.fail(function (res) {
             flash_message(res.responseJSON.message)
         });
     });
 
-// ****************************************
-// List all Customers
-// ****************************************
+    // ****************************************
+    // List all Customers
+    // ****************************************
 
-$("#list-btn").click(function () {
-    $("#flash_message").empty();
+    $("#list-btn").click(function () {
+        $("#flash_message").empty();
 
-    let ajax = $.ajax({
-        type: "GET",
-        url: "/customers", // Adjust the URL to match your API endpoint for fetching customers
-        contentType: "application/json",
-        data: ''
-    });
+        let ajax = $.ajax({
+            type: "GET",
+            url: "/customers", // Adjust the URL to match your API endpoint for fetching customers
+            contentType: "application/json",
+            data: ''
+        });
 
-    ajax.done(function (res) {
-        $("#search_results").empty();
-        let table = '<table class="table table-striped" cellpadding="10">'
-        table += '<thead><tr>'
-        table += '<th class="col-md-2">ID</th>'
-        table += '<th class="col-md-2">Username</th>'
-        table += '<th class="col-md-2">First Name</th>'
-        table += '<th class="col-md-2">Last Name</th>'
-        table += '<th class="col-md-2">Email</th>'
-        table += '<th class="col-md-2">Active</th>'
-        table += '</tr></thead><tbody>'
-        let firstCustomer = "";
-        // for (let i = 0; i < res.length; i++) {
-        //     let customer = res[i];
-        //     table += `<tr id="row_${i}"><td>${customer.id}</td><td>${customer.username}</td><td>${customer.first_name}</td><td>${customer.last_name}</td><td>${customer.email}</td><td>${customer.active}</td></tr>`;
-        //     if (i == 0) {
-        //         firstCustomer = customer;
-        //     }
-        // }
+        ajax.done(function (res) {
+            $("#search_results").empty();
+            let table = '<table class="table table-striped" cellpadding="10">'
+            table += '<thead><tr>'
+            table += '<th class="col-md-2">ID</th>'
+            table += '<th class="col-md-2">Username</th>'
+            table += '<th class="col-md-2">First Name</th>'
+            table += '<th class="col-md-2">Last Name</th>'
+            table += '<th class="col-md-2">Email</th>'
+            table += '<th class="col-md-2">Active</th>'
+            table += '</tr></thead><tbody>'
+            let firstCustomer = "";
+            // for (let i = 0; i < res.length; i++) {
+            //     let customer = res[i];
+            //     table += `<tr id="row_${i}"><td>${customer.id}</td><td>${customer.username}</td><td>${customer.first_name}</td><td>${customer.last_name}</td><td>${customer.email}</td><td>${customer.active}</td></tr>`;
+            //     if (i == 0) {
+            //         firstCustomer = customer;
+            //     }
+            // }
 
-        for (let i = 0; i < res.length; i++) {
-            let customer = res[i];
-            table += `<tr id="row_${customer.id}" class="customer-row" data-customer-id="${customer.id}">
+            for (let i = 0; i < res.length; i++) {
+                let customer = res[i];
+                table += `<tr id="row_${customer.id}" class="customer-row" data-customer-id="${customer.id}">
                 <td>${customer.id}</td>
                 <td>${customer.username}</td>
                 <td>${customer.first_name}</td>
@@ -130,93 +131,230 @@ $("#list-btn").click(function () {
                 <td>${customer.active}</td>
                 <td><button class="btn btn-info view-details-btn" data-customer-id="${customer.id}">View Details</button></td>
             </tr>`;
-        }
-
-        table += '</tbody></table>';
-        $("#search_results").append(table);
-
-        flash_message("Success")
-    });
-
-    ajax.fail(function (res) {
-        flash_message(res.responseJSON.message)
-    });
-});
-})
-
-
-// ****************************************
-// Delete a customer by id
-// ****************************************
-$('#delete-btn').on('click', function() {
-    var customerId = $('#customer_id').val();
-    if (customerId) {
-        $.ajax({
-            url: '/customers/' + customerId,
-            type: 'DELETE',
-            success: function(result) {
-                flash_message('Success');  
-            },
-            error: function(xhr, status, error) {
-                flash_message('Error deleting customer: ' + (error || 'Unknown error'));
             }
-        });
-    } else {
-        flash_message('No customer ID provided');
-    }
-});
 
-// ****************************************
-// Retrieve a customer by id
-// ****************************************
-$('#retrieve-btn').on('click', function() {
-    var customerId = $('#customer_id').val();
-    if (customerId) {
-        $.ajax({
-            url: '/customers/' + customerId,
-            type: 'GET',
+            table += '</tbody></table>';
+            $("#search_results").append(table);
+
+            flash_message("Success")
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+    });
+
+    // ****************************************
+    // Retrieve a Customer
+    // ****************************************
+
+    $("#retrieve-btn").click(function () {
+
+        let customer_id = $("#customer_id").val();
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "GET",
+            url: `/customers/${customer_id}`,
             contentType: "application/json",
-            success: function(response) {
-                update_form_data(response);  // This function will populate the form with the customer data
-                flash_message('Customer retrieved successfully');
+            data: ''
+        })
+
+        ajax.done(function (res) {
+            //alert(res.toSource())
+            update_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function (res) {
+            clear_form_data()
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
+    // ****************************************
+    // Delete a customer by id
+    // ****************************************
+
+    $("#delete-btn").click(function () {
+
+        let customer_id = $("#customer_id").val();
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "DELETE",
+            url: `/customers/${customer_id}`,
+            contentType: "application/json",
+            data: '',
+        })
+
+        ajax.done(function(res){
+            clear_form_data()
+            flash_message("Customer has been Deleted!")
+        });
+
+        ajax.fail(function(res){
+            flash_message("Server error!")
+        });
+    });
+
+
+    // Event Listener for 'View Details' Button Clicks
+    $(document).on('click', '.view-details-btn', function () {
+        var customerId = $(this).data('customer-id');
+        fetchCustomerDetails(customerId);
+    });
+
+    // The function fetchCustomerDetails should send an AJAX request to your server to retrieve customer data and then display it in the modal
+    function fetchCustomerDetails(customerId) {
+        $.ajax({
+            type: "GET",
+            url: "/customers/" + customerId,
+            contentType: "application/json",
+            success: function (response) {
+                // Assuming 'response' is the customer data
+                $('#detail-id').text(response.id);
+                $('#detail-username').text(response.username);
+                $('#detail-first-name').text(response.first_name);
+                $('#detail-last-name').text(response.last_name);
+
+                $('#detail-gender').text(response.gender);
+                $('#detail-active').text(response.active ? 'True' : 'False');
+                $('#detail-address').text(response.address);
+                $('#detail-email').text(response.email);
+                // Show the modal
+                $('#customerDetailsModal').modal('show');
             },
-            error: function(xhr) {
-                var errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Unknown error';
-                flash_message('Error retrieving customer: ' + errorMessage);
+            error: function (xhr) {
+                flash_message('Error: ' + xhr.responseJSON.message);
             }
         });
-    } else {
-        flash_message('Please provide a customer ID');
     }
-});
 
-// Event Listener for 'View Details' Button Clicks
-$(document).on('click', '.view-details-btn', function() {
-    var customerId = $(this).data('customer-id');
-    fetchCustomerDetails(customerId);
-});
+    // ****************************************
+    // Clear the form
+    // ****************************************
 
-// The function fetchCustomerDetails should send an AJAX request to your server to retrieve customer data and then display it in the modal
-function fetchCustomerDetails(customerId) {
-    $.ajax({
-        type: "GET",
-        url: "/customers/" + customerId,
-        contentType: "application/json",
-        success: function(response) {
-            $('#detail-id').text(response.id);
-            $('#detail-username').text(response.username);
-            $('#detail-first-name').text(response.first_name);
-            $('#detail-last-name').text(response.last_name);
-
-            $('#detail-gender').text(response.gender);
-            $('#detail-active').text(response.active ? 'True' : 'False');
-            $('#detail-address').text(response.address);
-            $('#detail-email').text(response.email);
-            $('#customerDetailsModal').modal('show');
-        },
-        error: function(xhr) {
-            flash_message('Error: ' + xhr.responseJSON.message);
-        }
+    $("#clear-btn").click(function () {
+        $("#customer_id").val("");
+        $("#flash_message").empty();
+        clear_form_data()
     });
-}
 
+
+    $("#search-btn").click(function () {
+
+        let username = $("#customer_username").val();
+        let email = $("#customer_email").val();
+        let address = $("#customer_address").val();
+        let first_name = $("#customer_first_name").val();
+        let last_name = $("#customer_last_name").val();
+        let gender = $("#customer_gender").val();
+        let active = $("#customer_active").val();
+
+        let queryString = ""
+
+        if (username) {
+            queryString += 'username=' + username
+        }
+        if (email) {
+            if (queryString.length > 0) {
+                queryString += '&email=' + email
+            } else {
+                queryString += 'email=' + email
+            }
+        }
+        if (address) {
+            if (queryString.length > 0) {
+                queryString += '&address=' + address
+            } else {
+                queryString += 'address=' + address
+            }
+        }
+        if (first_name) {
+            if (queryString.length > 0) {
+                queryString += '&first_name=' + first_name
+            } else {
+                queryString += 'first_name=' + first_name
+            }
+        }
+        if (last_name) {
+            if (queryString.length > 0) {
+                queryString += '&last_name=' + last_name
+            } else {
+                queryString += 'last_name=' + last_name
+            }
+        }
+        if (gender) {
+            if (queryString.length > 0) {
+                queryString += '&gender=' + gender
+            } else {
+                queryString += 'gender=' + gender
+            }
+        }
+        if (active) {
+            if (queryString.length > 0) {
+                queryString += '&active=' + active
+            } else {
+                queryString += 'active=' + active
+            }
+        }
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "GET",
+            url: `/customers?${queryString}`,
+            contentType: "application/json",
+            data: ''
+        })
+
+        ajax.done(function (res) {
+            //alert(res.toSource())
+            $("#search_results").empty();
+            let table = '<table class="table table-striped" cellpadding="10">'
+            table += '<thead><tr>'
+            table += '<th class="col-md-2">ID</th>'
+            table += '<th class="col-md-2">Username</th>'
+            table += '<th class="col-md-2">First Name</th>'
+            table += '<th class="col-md-2">Last Name</th>'
+            table += '<th class="col-md-2">Email</th>'
+            table += '<th class="col-md-2">Active</th>'
+            table += '</tr></thead><tbody>'
+            let firstCustomer = "";
+
+            for (let i = 0; i < res.length; i++) {
+                let customer = res[i];
+                table += `<tr id="row_${customer.id}" class="customer-row" data-customer-id="${customer.id}">
+                <td>${customer.id}</td>
+                <td>${customer.username}</td>
+                <td>${customer.first_name}</td>
+                <td>${customer.last_name}</td>
+                <td>${customer.email}</td>
+                <td>${customer.active}</td>
+                <td><button class="btn btn-info view-details-btn" data-customer-id="${customer.id}">View Details</button></td>
+            </tr>`;
+                if (i == 0) {
+                    firstCustomer = customer;
+                }
+            }
+
+            table += '</tbody></table>';
+            $("#search_results").append(table);
+
+            // copy the first result to the form
+            if (firstCustomer != "") {
+                update_form_data(firstCustomer)
+            }
+
+            flash_message("Success")
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+    });
+})
