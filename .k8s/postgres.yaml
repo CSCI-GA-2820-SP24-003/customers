@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:alpine
+          image: "postgres:alpine"
           ports:
             - containerPort: 5432
               protocol: TCP
@@ -41,21 +41,21 @@ spec:
       volumes:
       - name: postgres-storage
         persistentVolumeClaim:
-          claimName: postgres-pvc
+          claimName: postgres-data
         # emptyDir: {}
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pvc
+  name: postgres-data
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
-  storageClassName: ""
+  storageClassName: "default"
 
 ---
 apiVersion: v1

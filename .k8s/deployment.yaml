@@ -1,31 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nyu-project
+  name: customers
   labels:
-    app: nyu-project
+    app: customers
 spec:
   replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 0%
-      maxUnavailable: 50%
+      maxSurge: 2
+      maxUnavailable: 0
   selector:
     matchLabels:
-      app: nyu-project
+      app: customers
   template:
     metadata:
       labels:
-        app: nyu-project
+        app: customers
     spec:
-      imagePullSecrets:
-      - name: all-icr-io
+      #imagePullSecrets:
+      #- name: all-icr-io
       restartPolicy: Always
       containers:
-      - name: nyu-project
-        # image: cluster-registry:32000/customers:1.0
-        image: nyu-project
+      - name: customers
+        image: cluster-registry:32000/customers:1.0
+        #image: nyu-project
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -38,6 +38,14 @@ spec:
               secretKeyRef:
                 name: postgres-creds
                 key: database_uri
+          #- name: PORT
+          #  value: "8080"
+          #- name: FLASK_APP
+          #  value: wsgi:app
+          #- name: FLASK_DEBUG
+          #  value: "True"
+          #- name: GUNICORN_BIND
+          #  value: "0.0.0.0:8080"
         readinessProbe:
           initialDelaySeconds: 5
           periodSeconds: 30
