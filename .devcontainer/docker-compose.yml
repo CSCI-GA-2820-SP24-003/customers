@@ -12,6 +12,8 @@ services:
     volumes:
       - ..:/app
     command: sleep infinity
+    ports:
+      - "8080:8080"
     environment:
       PORT: 8000
       FLASK_APP: wsgi:app
