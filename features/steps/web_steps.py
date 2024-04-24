@@ -246,18 +246,20 @@ def step_impl(context, username):
     else:
         raise Exception(f"Customer with username {username} not found")
     
-@when(u'I press the "Activate" button for customer "{username}"')
-def step_impl(context, username):
-    customer_row = WebDriverWait(context.driver, 10).until(
-        expected_conditions.visibility_of_element_located((By.XPATH, f"//td[text()='{username}']/.."))
-    )
-    activate_button = customer_row.find_element(By.CSS_SELECTOR, ".activate-btn")
-    activate_button.click()
+# @when(u'I press the "Activate" button for customer "{username}"')
+# def step_impl(context, username):
+#     activate_button_xpath = f"//td[contains(.,'{username}')]/following-sibling::td//button[contains(@class,'activate-btn')]"
 
-@when(u'I press the "Deactivate" button for customer "{username}"')
-def step_impl(context, username):
-    customer_row = WebDriverWait(context.driver, 10).until(
-        expected_conditions.visibility_of_element_located((By.XPATH, f"//td[text()='{username}']/.."))
-    )
-    deactivate_button = customer_row.find_element(By.CSS_SELECTOR, ".deactivate-btn")
-    deactivate_button.click()
+#     activate_button = WebDriverWait(context.driver, 20).until(
+#         expected_conditions.element_to_be_clickable((By.XPATH, activate_button_xpath))
+#     )
+#     activate_button.click()
+
+# @when(u'I press the "Deactivate" button for customer "{username}"')
+# def step_impl(context, username):
+#     deactivate_button_xpath = f"//td[contains(.,'{username}')]/following-sibling::td//button[contains(@class,'deactivate-btn')]"
+
+#     deactivate_button = WebDriverWait(context.driver, 20).until(
+#         expected_conditions.element_to_be_clickable((By.XPATH, deactivate_button_xpath))
+#     )
+#     deactivate_button.click()
