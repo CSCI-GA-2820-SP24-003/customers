@@ -245,3 +245,19 @@ def step_impl(context, username):
         context.driver.find_element(By.ID, 'delete-btn').click()
     else:
         raise Exception(f"Customer with username {username} not found")
+    
+@when(u'I press the "Activate" button for customer "{username}"')
+def step_impl(context, username):
+    customer_row = WebDriverWait(context.driver, 10).until(
+        expected_conditions.visibility_of_element_located((By.XPATH, f"//td[text()='{username}']/.."))
+    )
+    activate_button = customer_row.find_element(By.CSS_SELECTOR, ".activate-btn")
+    activate_button.click()
+
+@when(u'I press the "Deactivate" button for customer "{username}"')
+def step_impl(context, username):
+    customer_row = WebDriverWait(context.driver, 10).until(
+        expected_conditions.visibility_of_element_located((By.XPATH, f"//td[text()='{username}']/.."))
+    )
+    deactivate_button = customer_row.find_element(By.CSS_SELECTOR, ".deactivate-btn")
+    deactivate_button.click()
