@@ -105,7 +105,11 @@ Scenario: Deactivate a Customer
 
 Scenario: Activate a Customer
     When I visit the "Home Page"
+    And I set the "username" to "lion15"
     And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "lion15" in the "username" field
+    When I copy the "id" field
     And I press the "Activate" button for the first customer
     Then I should see the message "Activating successful"
 
