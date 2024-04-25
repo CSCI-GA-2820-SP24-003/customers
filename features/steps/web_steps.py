@@ -182,6 +182,20 @@ def step_impl(context):
     )
     button.click()
 
+@when('I press the "Activate" button for the first customer')
+def step_impl(context):
+    button = WebDriverWait(context.driver, 10).until(
+        expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".activate-btn"))
+    )
+    button.click()
+
+@when('I press the "Deactivate" button for the first customer')
+def step_impl(context):
+    button = WebDriverWait(context.driver, 10).until(
+        expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".deactivate-btn"))
+    )
+    button.click()
+
 
 @then("I should see all details for the customer in a modal")
 def step_impl(context):

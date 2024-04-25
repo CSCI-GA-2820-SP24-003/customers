@@ -228,7 +228,7 @@ $(function () {
             contentType: "application/json",
             data: '', 
             success: function () {
-                flash_message(`${statusText} successful for customer id: ${customerId}`);
+                flash_message(`${statusText} successful`);
                 $('#' + `row_${customerId} .activate-btn`).prop('disabled', isActive);
                 $('#' + `row_${customerId} .deactivate-btn`).prop('disabled', !isActive);
             },

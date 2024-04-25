@@ -97,19 +97,16 @@ Scenario: Delete a Customer and Verify Absence from List
     Then I should see the message "Success"
     And I should not see "kaite5" in the results
 
-# Scenario: Deactivate a Customer
-#     When I visit the "Home Page"
-#     And I press the "Search" button
-#     And I press the "Deactivate" button for customer "kaite5"
-#     Then I should see the message "Customer deactivated successfully"
-#     When I press the "View Details" button for customer "kaite5"
-#     Then I should see "False" in the "active" field for customer "kaite5"
+Scenario: Deactivate a Customer
+    When I visit the "Home Page"
+    And I press the "Search" button
+    And I press the "Deactivate" button for the first customer
+    Then I should see the message "Deactivating successful"
 
-# Scenario: Activate a Customer
-#     When I visit the "Home Page"
-#     And I press the "Search" button
-#     And I press the "Activate" button for customer "lion15"
-#     Then I should see the message "Customer activated successfully"
-#     When I press the "View Details" button for customer "lion15"
-#     Then I should see "True" in the "active" field for customer "lion15"
+Scenario: Activate a Customer
+    When I visit the "Home Page"
+    And I press the "Search" button
+    And I press the "Activate" button for the first customer
+    Then I should see the message "Activating successful"
+
 
