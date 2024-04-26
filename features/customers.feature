@@ -13,7 +13,7 @@ Background:
 
 Scenario: The server is running
     When I visit the "Home Page"
-    Then I should see "Customer DataBase" in the title
+    Then I should see "Customer Demo RESTful Service" in the title
     And I should not see "404 Not Found"
 
 Scenario: Create a Customer
@@ -59,12 +59,6 @@ Scenario: List all Customers
     And I should see "lion15" in the results
     And I should see "natedog" in the results
 
-Scenario: View details of a customer
-    When I visit the "Home Page"
-    And I press the "Search" button
-    And I press the "View Details" button for the first customer
-    Then I should see all details for the customer in a modal
-
 Scenario: Search for females
     When I visit the "Home Page"
     And I select "Female" in the "gender" dropdown
@@ -84,14 +78,35 @@ Scenario: Search for active
     And I should see "natedog" in the results
     And I should not see "lion15" in the results
 
+Scenario: Update a customer
+    When I visit the "Home Page"
+    And I set the "username" to "kaite5"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "kaite5" in the "username" field
+    And I should see "MALE" in the "gender" field
+    When I change "username" to "kevin6"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "id" field
+    And I press the "Clear" button
+    And I paste the "id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "kevin6" in the "username" field
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "kevin6" in the results
+    And I should not see "kaite5" in the results
+
 Scenario: Delete a Customer and Verify Absence from List
     When I visit the "Home Page"
     And I set the "username" to "kaite5"
     And I press the "Search" button
     Then I should see the message "Success"
     And I should see "kaite5" in the "username" field
-    When I copy the "id" field
-    And I press the "Delete" button
+    When I press the "Delete" button
     Then I should see the message "Customer has been Deleted!"
     When I press the "Search" button
     Then I should see the message "Success"
