@@ -47,6 +47,9 @@ def create_app():
     ######################################################################
     # Configure Swagger before initializing it
     ######################################################################
+
+    # Initialize Plugins
+    # pylint: disable=import-outside-toplevel
     global api
     api = Api(
         app,
