@@ -31,12 +31,12 @@ HTTP_201_CREATED = 201
 HTTP_204_NO_CONTENT = 204
 
 
-@given('The following customers')
+@given("The following customers")
 def step_impl(context):
-    """ Delete all Customers and load new ones """
+    """Delete all Customers and load new ones"""
 
     # List all of the customers and delete them one by one
-    rest_endpoint = f"{context.base_url}/customers"
+    rest_endpoint = f"{context.base_url}/api/customers"
     context.resp = requests.get(rest_endpoint, timeout=10)
     assert context.resp.status_code == HTTP_200_OK
 
@@ -47,15 +47,15 @@ def step_impl(context):
     # load the database with new customers
     for row in context.table:
         payload = {
-            "id": row['id'],
-            "username": row['username'],
-            "password": row['password'],
-            "first_name": row['first_name'],
-            "last_name": row['last_name'],
-            "gender": row['gender'],
-            "active": row['active'] in ['True', 'true', '1'],
-            "address": row['address'],
-            "email": row['email']
+            "id": row["id"],
+            "username": row["username"],
+            "password": row["password"],
+            "first_name": row["first_name"],
+            "last_name": row["last_name"],
+            "gender": row["gender"],
+            "active": row["active"] in ["True", "true", "1"],
+            "address": row["address"],
+            "email": row["email"],
         }
         context.resp = requests.post(rest_endpoint, json=payload, timeout=10)
         assert context.resp.status_code == HTTP_201_CREATED

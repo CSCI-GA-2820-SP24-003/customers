@@ -20,3 +20,6 @@ SECRET_KEY = os.getenv("SECRET_KEY", "sup3r-s3cr3t")
 LOGGING_LEVEL = logging.INFO
 
 # DATABASE_URI: "postgresql+psycopg://postgres:pgs3cr3t@postgres:5432/postgres"
+
+# Turn off helpful error messages that interfere with REST API messages
+ERROR_404_HELP = False
