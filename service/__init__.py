@@ -24,9 +24,6 @@ from flask_restx import Api
 from service import config
 from service.common import log_handlers
 
-# Initialize Plugins
-# pylint: disable=import-outside-toplevel
-from .models import db
 
 # NOTE: Do not change the order of this code
 # The Flask app must be created
@@ -62,6 +59,10 @@ def create_app():
         # authorizations=authorizations,
         prefix="/api",
     )
+
+    # Initialize Plugins
+    # pylint: disable=import-outside-toplevel
+    from .models import db
 
     db.init_app(app)
 
