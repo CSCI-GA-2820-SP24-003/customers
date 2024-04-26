@@ -369,7 +369,6 @@ class DeactivateCustomerResource(Resource):
 ######################################################################
 # Checks the ContentType of a request
 ######################################################################
-@app.route("/customers/<int:customer_id>/check_content_type", methods=["PUT"])
 def check_content_type(content_type):
     """Checks that the media type is correct"""
     if "Content-Type" not in request.headers:
@@ -384,8 +383,7 @@ def check_content_type(content_type):
 
     app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
     error(
-        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-        f"Content-Type must be {content_type}",
+        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, f"Content-Type must be {content_type}"
     )
 
 
