@@ -184,7 +184,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "DELETE",
-            url: `/${BASE_URL}/${customer_id}`,
+            url: `${BASE_URL}/${customer_id}`,
             contentType: "application/json",
             data: '',
         })
