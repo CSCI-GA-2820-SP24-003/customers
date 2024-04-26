@@ -24,12 +24,13 @@ from flask_restx import Api
 from service import config
 from service.common import log_handlers
 
+# Initialize Plugins
+# pylint: disable=import-outside-toplevel
+from .models import db
+
 # NOTE: Do not change the order of this code
 # The Flask app must be created
 # BEFORE you import modules that depend on it !!!
-
-# Document the type of authorization required
-authorizations = {"apikey": {"type": "apiKey", "in": "header", "name": "X-Api-Key"}}
 
 # Will be initialize when app is created
 api = None  # pylint: disable=invalid-name
@@ -53,24 +54,20 @@ def create_app():
     api = Api(
         app,
         version="1.0.0",
-        title="Pet Demo REST API Service",
-        description="This is a sample server Pet store server.",
-        default="pets",
-        default_label="Pet shop operations",
+        title="Customer REST API Service",
+        description="This is a Customer server.",
+        default="customers",
+        default_label="Customers operations",
         doc="/apidocs",  # default also could use doc='/apidocs/'
         # authorizations=authorizations,
         prefix="/api",
     )
 
-    # Initialize Plugins
-    # pylint: disable=import-outside-toplevel
-    from service.models import db
-
     db.init_app(app)
 
     with app.app_context():
         # Dependencies require we import the routes AFTER the Flask app is created
-        # pylint: disable=wrong-import-position, wrong-import-order, unused-import
+        # pylint: disable=wrong-import-position, wrong-import-order, unused-import, cyclic-import
         from service import routes, models  # noqa: F401 E402
         from service.common import error_handlers, cli_commands  # noqa: F401, E402
 
