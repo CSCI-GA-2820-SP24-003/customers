@@ -92,57 +92,53 @@ $(function () {
 
     $("#list-btn").click(function () {
         $("#flash_message").empty();
-
+    
         let ajax = $.ajax({
             type: "GET",
-            url: "/customers", // Adjust the URL to match your API endpoint for fetching customers
+            url: "/customers", 
             contentType: "application/json",
             data: ''
         });
-
+    
         ajax.done(function (res) {
             $("#search_results").empty();
             let table = '<table class="table table-striped" cellpadding="10">'
             table += '<thead><tr>'
-            table += '<th class="col-md-2">ID</th>'
+            table += '<th class="col-md-1">ID</th>'
             table += '<th class="col-md-2">Username</th>'
             table += '<th class="col-md-2">First Name</th>'
             table += '<th class="col-md-2">Last Name</th>'
             table += '<th class="col-md-2">Email</th>'
-            table += '<th class="col-md-2">Active</th>'
+            table += '<th class="col-md-1">Active</th>'
+            table += '<th class="col-md-2">Actions</th>'
             table += '</tr></thead><tbody>'
-            let firstCustomer = "";
-            // for (let i = 0; i < res.length; i++) {
-            //     let customer = res[i];
-            //     table += `<tr id="row_${i}"><td>${customer.id}</td><td>${customer.username}</td><td>${customer.first_name}</td><td>${customer.last_name}</td><td>${customer.email}</td><td>${customer.active}</td></tr>`;
-            //     if (i == 0) {
-            //         firstCustomer = customer;
-            //     }
-            // }
-
-            for (let i = 0; i < res.length; i++) {
-                let customer = res[i];
+    
+            res.forEach(function(customer) {
                 table += `<tr id="row_${customer.id}" class="customer-row" data-customer-id="${customer.id}">
-                <td>${customer.id}</td>
-                <td>${customer.username}</td>
-                <td>${customer.first_name}</td>
-                <td>${customer.last_name}</td>
-                <td>${customer.email}</td>
-                <td>${customer.active}</td>
-                <td><button class="btn btn-info view-details-btn" data-customer-id="${customer.id}">View Details</button></td>
-            </tr>`;
-            }
-
+                    <td>${customer.id}</td>
+                    <td>${customer.username}</td>
+                    <td>${customer.first_name}</td>
+                    <td>${customer.last_name}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.active}</td>
+                    <td>
+                        <button class="btn btn-info view-details-btn" data-customer-id="${customer.id}">View Details</button>
+                        <button class="btn btn-success activate-btn" data-customer-id="${customer.id}" ${customer.active ? 'disabled' : ''}>Activate</button>
+                        <button class="btn btn-warning deactivate-btn" data-customer-id="${customer.id}" ${!customer.active ? 'disabled' : ''}>Deactivate</button>
+                    </td>
+                </tr>`;
+            });
+    
             table += '</tbody></table>';
             $("#search_results").append(table);
-
             flash_message("Success")
         });
-
+    
         ajax.fail(function (res) {
             flash_message(res.responseJSON.message)
         });
     });
+    
 
     // ****************************************
     // Retrieve a Customer
@@ -207,6 +203,42 @@ $(function () {
         var customerId = $(this).data('customer-id');
         fetchCustomerDetails(customerId);
     });
+
+    // ****************************************
+    // Activate and deactivate buttons
+    // ****************************************
+
+    $(document).on('click', '.activate-btn', function () {
+        let customerId = $(this).data('customer-id');
+        toggleActiveStatus(customerId, true); 
+    });
+        
+    $(document).on('click', '.deactivate-btn', function () {
+        let customerId = $(this).data('customer-id');
+        toggleActiveStatus(customerId, false); 
+    });
+        
+    function toggleActiveStatus(customerId, isActive) {
+        let statusText = isActive ? "Activating" : "Deactivating";
+        let endpoint = isActive ? `/customers/${customerId}/activate` : `/customers/${customerId}/deactivate`;
+    
+        $.ajax({
+            type: "PUT",
+            url: endpoint,
+            contentType: "application/json",
+            data: '', 
+            success: function () {
+                flash_message(`${statusText} successful`);
+                $('#' + `row_${customerId} .activate-btn`).prop('disabled', isActive);
+                $('#' + `row_${customerId} .deactivate-btn`).prop('disabled', !isActive);
+            },
+            error: function (xhr) {
+                flash_message(`${statusText} failed: ` + xhr.responseJSON.message);
+            }
+        });
+    }
+    
+    
 
     // The function fetchCustomerDetails should send an AJAX request to your server to retrieve customer data and then display it in the modal
     function fetchCustomerDetails(customerId) {
@@ -335,12 +367,17 @@ $(function () {
                 <td>${customer.last_name}</td>
                 <td>${customer.email}</td>
                 <td>${customer.active}</td>
-                <td><button class="btn btn-info view-details-btn" data-customer-id="${customer.id}">View Details</button></td>
+                <td>
+                    <button class="btn btn-info view-details-btn" data-customer-id="${customer.id}">View Details</button>
+                    <button class="btn btn-success activate-btn" data-customer-id="${customer.id}" ${customer.active ? 'disabled' : ''}>Activate</button>
+                    <button class="btn btn-warning deactivate-btn" data-customer-id="${customer.id}" ${!customer.active ? 'disabled' : ''}>Deactivate</button>
+                </td>
             </tr>`;
                 if (i == 0) {
                     firstCustomer = customer;
                 }
             }
+            
 
             table += '</tbody></table>';
             $("#search_results").append(table);
@@ -356,5 +393,6 @@ $(function () {
         ajax.fail(function (res) {
             flash_message(res.responseJSON.message)
         });
+        
     });
 })

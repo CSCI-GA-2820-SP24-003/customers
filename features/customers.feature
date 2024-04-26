@@ -96,3 +96,21 @@ Scenario: Delete a Customer and Verify Absence from List
     When I press the "Search" button
     Then I should see the message "Success"
     And I should not see "kaite5" in the results
+
+Scenario: Deactivate a Customer
+    When I visit the "Home Page"
+    And I press the "Search" button
+    And I press the "Deactivate" button for the first customer
+    Then I should see the message "Deactivating successful"
+
+Scenario: Activate a Customer
+    When I visit the "Home Page"
+    And I set the "username" to "lion15"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "lion15" in the "username" field
+    When I copy the "id" field
+    And I press the "Activate" button for the first customer
+    Then I should see the message "Activating successful"
+
+
