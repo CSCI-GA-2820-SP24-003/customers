@@ -171,7 +171,7 @@ $(function () {
 
         let ajax = $.ajax({
                 type: "PUT",
-                url: `/customers/${customer_id}`,
+                url: `${BASE_URL}/${customer_id}`,
                 contentType: "application/json",
                 data: JSON.stringify(data)
             })
