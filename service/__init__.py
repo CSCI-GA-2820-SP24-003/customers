@@ -20,8 +20,17 @@ and SQL database
 """
 import sys
 from flask import Flask
+from flask_restx import Api
 from service import config
 from service.common import log_handlers
+
+
+# NOTE: Do not change the order of this code
+# The Flask app must be created
+# BEFORE you import modules that depend on it !!!
+
+# Will be initialize when app is created
+api = None  # pylint: disable=invalid-name
 
 
 ############################################################
@@ -33,14 +42,36 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(config)
 
+    app.url_map.strict_slashes = False
+
+    ######################################################################
+    # Configure Swagger before initializing it
+    ######################################################################
+
     # Initialize Plugins
     # pylint: disable=import-outside-toplevel
-    from service.models import db
+    global api
+    api = Api(
+        app,
+        version="1.0.0",
+        title="Customer REST API Service",
+        description="This is a Customer server.",
+        default="customers",
+        default_label="Customers operations",
+        doc="/apidocs",  # default also could use doc='/apidocs/'
+        # authorizations=authorizations,
+        prefix="/api",
+    )
+
+    # Initialize Plugins
+    # pylint: disable=import-outside-toplevel
+    from .models import db
+
     db.init_app(app)
 
     with app.app_context():
         # Dependencies require we import the routes AFTER the Flask app is created
-        # pylint: disable=wrong-import-position, wrong-import-order, unused-import
+        # pylint: disable=wrong-import-position, wrong-import-order, unused-import, cyclic-import
         from service import routes, models  # noqa: F401 E402
         from service.common import error_handlers, cli_commands  # noqa: F401, E402
 
