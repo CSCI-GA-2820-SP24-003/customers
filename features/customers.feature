@@ -100,7 +100,7 @@ Scenario: Update a customer
     And I should see "kevin6" in the results
     And I should not see "kaite5" in the results
 
-Scenario: Delete a Customer and Verify Absence from List
+Scenario: Delete a Customer
     When I visit the "Home Page"
     And I set the "username" to "kaite5"
     And I press the "Search" button
