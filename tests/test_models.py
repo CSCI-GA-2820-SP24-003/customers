@@ -139,7 +139,7 @@ class TestCustomer(TestCase):
         with self.assertRaises(DataValidationError) as context:
             customer2.create()
 
-        self.assertIn('Username user123 is already in use', str(context.exception))
+        self.assertIn("Username user123 is already in use", str(context.exception))
 
     def test_create_with_duplicate_email(self):
         """It should not create a customer with a duplicate email"""
@@ -150,7 +150,7 @@ class TestCustomer(TestCase):
         with self.assertRaises(DataValidationError) as context:
             customer2.create()
 
-        self.assertIn('Email 123@example.com is already in use', str(context.exception))
+        self.assertIn("Email 123@example.com is already in use", str(context.exception))
 
     def test_read_a_customer(self):
         """It should Read a customer"""
@@ -231,7 +231,9 @@ class TestCustomer(TestCase):
         with self.assertRaises(DataValidationError) as context:
             customer2.update()
 
-        self.assertIn('Username already exists with another account', str(context.exception))
+        self.assertIn(
+            "Username already exists with another account", str(context.exception)
+        )
 
     def test_update_with_duplicate_email(self):
         """It should not create a customer with a duplicate email"""
@@ -244,7 +246,9 @@ class TestCustomer(TestCase):
         with self.assertRaises(DataValidationError) as context:
             customer2.update()
 
-        self.assertIn('Email already exists with another account', str(context.exception))
+        self.assertIn(
+            "Email already exists with another account", str(context.exception)
+        )
 
     def test_delete_a_customer(self):
         """It should Delete a Customer"""

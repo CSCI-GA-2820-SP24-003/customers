@@ -4,6 +4,8 @@ $(function () {
     //  U T I L I T Y   F U N C T I O N S
     // ****************************************
 
+    let BASE_URL = "/api/customers";
+
     // Updates the form with data from the response
     function update_form_data(res) {
         $("#customer_id").val(res.id);
@@ -70,7 +72,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "POST",
-            url: "/customers",
+            url: BASE_URL,
             contentType: "application/json",
             data: JSON.stringify(data),
         });
@@ -94,7 +96,7 @@ $(function () {
     
         let ajax = $.ajax({
             type: "GET",
-            url: "/customers", 
+            url: BASE_URL, 
             contentType: "application/json",
             data: ''
         });
@@ -197,7 +199,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "GET",
-            url: `/customers/${customer_id}`,
+            url: `${BASE_URL}/${customer_id}`,
             contentType: "application/json",
             data: ''
         })
@@ -227,7 +229,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "DELETE",
-            url: `/customers/${customer_id}`,
+            url: `${BASE_URL}/${customer_id}`,
             contentType: "application/json",
             data: '',
         })
@@ -265,7 +267,7 @@ $(function () {
         
     function toggleActiveStatus(customerId, isActive) {
         let statusText = isActive ? "Activating" : "Deactivating";
-        let endpoint = isActive ? `/customers/${customerId}/activate` : `/customers/${customerId}/deactivate`;
+        let endpoint = isActive ? `${BASE_URL}/${customerId}/activate` : `${BASE_URL}/${customerId}/deactivate`;
     
         $.ajax({
             type: "PUT",
@@ -287,7 +289,7 @@ $(function () {
     function fetchCustomerDetails(customerId) {
         $.ajax({
             type: "GET",
-            url: "/customers/" + customerId,
+            url: BASE_URL + "/" + customerId,
             contentType: "application/json",
             success: function (response) {
                 // Assuming 'response' is the customer data
@@ -382,7 +384,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "GET",
-            url: `/customers?${queryString}`,
+            url: `${BASE_URL}?${queryString}`,
             contentType: "application/json",
             data: ''
         })

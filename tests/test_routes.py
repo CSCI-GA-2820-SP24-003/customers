@@ -18,7 +18,7 @@ from .customer_factory import CustomerFactory
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
 )
-BASE_URL = "/customers"
+BASE_URL = "/api/customers"
 
 
 def encrypt_password(password):
@@ -323,22 +323,20 @@ class TestCustomerService(TestCase):
     def test_get_customer_list_with_invalid_gender(self):
         """It should return an error for invalid gender value"""
         response = self.client.get(f"{BASE_URL}?gender=NOT_A_GENDER")
-        self.assertEqual(response.status_code, 400)
-        data = response.get_json()
-        self.assertIn("Invalid gender value", data["error"])
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_customer_list_with_invalid_active(self):
         """It should return an error for invalid active value"""
         response = self.client.get(f"{BASE_URL}?active=not_a_boolean")
-        self.assertEqual(response.status_code, 400)
-        data = response.get_json()
-        self.assertIn("Invalid active value", data["error"])
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_customer(self):
         """It should Update an existing Customer"""
         # create a customer to update
         test_customer = CustomerFactory()
-        response = self.client.post(BASE_URL, json=test_customer.serialize())
+        response = self.client.post(
+            BASE_URL, json=test_customer.serialize(), content_type="application/json"
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # update the customer
@@ -351,9 +349,8 @@ class TestCustomerService(TestCase):
         new_customer["address"] = "new_address"
         new_customer["email"] = "new_email"
 
-        response = self.client.put(
-            f"{BASE_URL}/{new_customer['id']}", json=new_customer
-        )
+        new_customer_id = new_customer["id"]
+        response = self.client.put(f"{BASE_URL}/{new_customer_id}", json=new_customer)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_customer = response.get_json()
         self.assertEqual(updated_customer["username"], "unknown")
@@ -397,31 +394,26 @@ class TestCustomerService(TestCase):
 
     def test_data_validation_error(self):
         """It should return a status code for an Invalid Field"""
-        response = self.client.post(
-            "/customers", json={"invalid_field": "invalid_value"}
-        )
+        response = self.client.post(BASE_URL, json={"invalid_field": "invalid_value"})
         self.assertEqual(response.status_code, 400)
         self.assertIn("Bad Request", response.json["error"])
 
     def test_bad_request(self):
         """It should return the correct bad request"""
         response = self.client.post(
-            "/customers", data="This is not JSON", content_type="application/json"
+            BASE_URL, data="This is not JSON", content_type="application/json"
         )
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("Bad Request", response.json["error"])
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_method_not_supported(self):
         """It should return the correct method not allowed"""
         response = self.client.put("/")
-        self.assertEqual(response.status_code, 405)
-        self.assertIn("Method not Allowed", response.json["error"])
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_mediatype_not_supported(self):
         """It should return that the datatype is not supported"""
-        response = self.client.post("/customers", data="{}", content_type="text/plain")
-        self.assertEqual(response.status_code, 415)
-        self.assertIn("Unsupported media type", response.json["error"])
+        response = self.client.post(BASE_URL, data="{}", content_type="text/plain")
+        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     def test_activate_customer(self):
         """It should Deactivate a Customer"""
