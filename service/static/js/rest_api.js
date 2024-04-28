@@ -25,7 +25,6 @@ $(function () {
 
     /// Clears all form fields
     function clear_form_data() {
-        $("#customer_data").val("");
         $("#customer_username").val("");
         $("#customer_password").val("");
         $("#customer_first_name").val("");
@@ -140,7 +139,53 @@ $(function () {
             flash_message(res.responseJSON.message)
         });
     });
-    
+
+    // ****************************************
+    // Update a Customer
+    // ****************************************
+
+    $("#update-btn").click(function () {
+        let customer_id = $("#customer_id").val();
+        let username = $("#customer_username").val();
+        let password = $("#customer_password").val();
+        let first_name = $("#customer_first_name").val();
+        let last_name = $("#customer_last_name").val();
+        let gender = $("#customer_gender").val();
+        let active = $("#customer_active").val() == "true";
+        let address = $("#customer_address").val();
+        let email = $("#customer_email").val();
+
+        let data = {
+            "customer_id": customer_id,
+            "username": username,
+            "password": password,
+            "first_name": first_name,
+            "last_name": last_name,
+            "gender": gender,
+            "active": active,
+            "address": address,
+            "email": email,
+        };
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+                type: "PUT",
+                url: `${BASE_URL}/${customer_id}`,
+                contentType: "application/json",
+                data: JSON.stringify(data)
+            })
+
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+
+    });
 
     // ****************************************
     // Retrieve a Customer
@@ -240,8 +285,6 @@ $(function () {
         });
     }
     
-    
-
     // The function fetchCustomerDetails should send an AJAX request to your server to retrieve customer data and then display it in the modal
     function fetchCustomerDetails(customerId) {
         $.ajax({
@@ -353,24 +396,26 @@ $(function () {
             table += '<thead><tr>'
             table += '<th class="col-md-2">ID</th>'
             table += '<th class="col-md-2">Username</th>'
-            table += '<th class="col-md-2">First Name</th>'
-            table += '<th class="col-md-2">Last Name</th>'
-            table += '<th class="col-md-2">Email</th>'
+            table += '<th class="col-md-2">Name</th>'
+            table += '<th class="col-md-2">Gender</th>'
             table += '<th class="col-md-2">Active</th>'
+            table += '<th class="col-md-2">Email</th>'
+            table += '<th class="col-md-2">Address</th>'
             table += '</tr></thead><tbody>'
             let firstCustomer = "";
 
             for (let i = 0; i < res.length; i++) {
                 let customer = res[i];
+                let fullName = `${customer.first_name} ${customer.last_name}`;
                 table += `<tr id="row_${customer.id}" class="customer-row" data-customer-id="${customer.id}">
                 <td>${customer.id}</td>
                 <td>${customer.username}</td>
-                <td>${customer.first_name}</td>
-                <td>${customer.last_name}</td>
-                <td>${customer.email}</td>
+                <td>${fullName}</td>
+                <td>${customer.gender}</td>
                 <td>${customer.active}</td>
+                <td>${customer.email}</td>
+                <td>${customer.address}</td>
                 <td>
-                    <button class="btn btn-info view-details-btn" data-customer-id="${customer.id}">View Details</button>
                     <button class="btn btn-success activate-btn" data-customer-id="${customer.id}" ${customer.active ? 'disabled' : ''}>Activate</button>
                     <button class="btn btn-warning deactivate-btn" data-customer-id="${customer.id}" ${!customer.active ? 'disabled' : ''}>Deactivate</button>
                 </td>
