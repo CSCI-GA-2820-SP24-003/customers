@@ -7,6 +7,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="static/images/newapp-icon.png">
     <link rel="stylesheet" href="static/css/cerulean_bootstrap.min.css">
+    <style>
+      html, body {
+        margin: 0;
+        }
+/* General body styling */
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Aligns vertically */
+  align-items: center; /* Aligns horizontally */
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  }
+
+
+/* Page Header */
+.page-header h1 {
+  color: blueviolet;
+  }
+  
+  /* Form styling */
+  .form-horizontal .form-group {
+  margin-bottom: 15px;
+  }
+  
+  /* Buttons styling */
+  .btn {
+  border-radius: 0;
+  padding: 10px 20px;
+  font-weight:bold;
+  }
+  
+  .btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  }
+  
+  .btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  }
+  
+  .btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+  }
+  
+  .btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  }
+  
+  /* Table styling */
+  .table {
+  background-color: #fff;
+  border-collapse: collapse;
+  }
+  
+  .table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0,0,0,.05);
+  }
+  
+  .table th,
+  .table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  }
+  
+  /* Footer styling */
+  footer {
+  margin-top: 50px;
+  text-align: center;
+  background-color: #333;
+  color: white;
+  font-size: 10px;
+  padding: 5px
+  }
+  
+  /* Flash Message */
+  #flash_message {
+  color: #28a745; /* Success color */
+  font-weight: bold;
+  }
+  
+
+    </style>
   </head>
   <body>
     <div class="container">
@@ -146,7 +232,6 @@
       </div>
 
       <footer>
-        <br><br>
         <p>&copy; NYU DevOps Company 2024</p>
       </footer>
 
