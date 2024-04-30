@@ -464,3 +464,22 @@ class TestCustomerService(TestCase):
         nonexistent_customer_id = 99999
         response = self.client.put(f"{BASE_URL}/{nonexistent_customer_id}/deactivate")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_nonexistent_customer(self):
+        """Ensure updating a non-existent customer returns 404."""
+        non_existent_id = 999999
+        update_data = {
+            "username": "newuser",
+            "password": "newpassword",
+            "first_name": "New",
+            "last_name": "User",
+            "email": "newuser@example.com",
+        }
+        headers = {"Content-Type": "application/json"}
+        response = self.client.put(
+            f"{BASE_URL}/{non_existent_id}", json=update_data, headers=headers
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn(
+            "Customer with id: '999999' was not found", response.data.decode()
+        )
