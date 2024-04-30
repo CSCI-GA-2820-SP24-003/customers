@@ -416,7 +416,7 @@ class TestCustomerService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     def test_activate_customer(self):
-        """It should Deactivate a Customer"""
+        """It should Activate a Customer"""
         test_customer_data = CustomerFactory().serialize()
         test_customer_data["active"] = False
 
