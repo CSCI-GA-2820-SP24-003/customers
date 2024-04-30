@@ -115,8 +115,11 @@ Scenario: Delete a Customer
 Scenario: Deactivate a Customer
     When I visit the "Home Page"
     And I press the "Search" button
-    And I press the "Deactivate" button for the first customer
+    Then I should see "kaite5" in the results
+    When I press the "Deactivate" button for the first customer
     Then I should see the message "Deactivating successful"
+    When I press the "Retrieve" button
+    Then I should see "False" in the "active" dropdown
 
 Scenario: Activate a Customer
     When I visit the "Home Page"
@@ -124,8 +127,7 @@ Scenario: Activate a Customer
     And I press the "Search" button
     Then I should see the message "Success"
     And I should see "lion15" in the "username" field
-    When I copy the "id" field
-    And I press the "Activate" button for the first customer
+    When I press the "Activate" button for the first customer
     Then I should see the message "Activating successful"
-
-
+    When I press the "Retrieve" button
+    Then I should see "True" in the "active" dropdown
