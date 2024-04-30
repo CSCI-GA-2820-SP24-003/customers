@@ -1,5 +1,5 @@
-# The payment database should be created for you, if not here is the command:
-# psql -c "create database payment;" -U postgres
+# The customers database should be created for you, if not here is the command:
+# psql -c "create database customers;" -U postgres
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -91,7 +91,7 @@ metadata:
   name: postgres-config
 data:
   postgres_user: postgres
-  postgres_db: payments
+  postgres_db: customers
 ---
 # This secret can also be created from the command line using environment variables
 #
