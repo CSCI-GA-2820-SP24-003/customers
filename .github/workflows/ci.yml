@@ -61,4 +61,7 @@ jobs:
       
       - name: Upload code coverage
         uses: codecov/codecov-action@v3.1.4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: CSCI-GA-2820-SP24-003/customers
   
