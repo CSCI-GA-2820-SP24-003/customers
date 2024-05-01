@@ -23,6 +23,10 @@ spec:
       description: The name of the image to build
       type: string
       default: 'image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/$(params.APP_NAME):latest'
+    - default: 'https://customers-alexqzh-dev.apps.sandbox-m4.g2pi.p1.openshiftapps.com/'
+      description: The URL of the microservice
+      name: BASE_URL
+      type: string
   tasks:
     - name: git-clone
       params:
@@ -147,3 +151,20 @@ spec:
       workspaces:
         - name: source
           workspace: pipeline-workspace
+    - name: behave
+      params:
+        - name: BASE_URL
+          value: $(params.BASE_URL)
+        - name: WAIT_SECONDS
+          value: '60'
+        - name: DRIVER
+          value: chrome
+      runAfter:
+        - deploy-image
+      taskRef:
+        kind: Task
+        name: behave
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+
