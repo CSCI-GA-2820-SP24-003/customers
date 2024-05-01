@@ -12,10 +12,10 @@ services:
     volumes:
       - ..:/app
     command: sleep infinity
-    ports:
-      - "8080:8080"
+    # ports:
+    #   - "8080:8080"
     environment:
-      PORT: 8000
+      # PORT: 8000
       FLASK_APP: wsgi:app
       FLASK_DEBUG: "True"
       GUNICORN_BIND: "0.0.0.0:8000"
@@ -32,6 +32,7 @@ services:
     #   - 5432:5432
     environment:
       POSTGRES_PASSWORD: pgs3cr3t
+      POSTGRES_DB: postgres
     volumes:
       - postgres:/var/lib/postgresql/data
     networks:

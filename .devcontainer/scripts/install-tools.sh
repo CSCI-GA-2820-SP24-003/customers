@@ -36,6 +36,12 @@ curl -Lo skaffold "https://storage.googleapis.com/skaffold/releases/latest/skaff
 sudo install skaffold /usr/local/bin/
 
 echo "**********************************************************************"
+echo "Installing Skaffold..."
+echo "**********************************************************************"
+curl -Lo skaffold "https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-$ARCH"
+sudo install skaffold /usr/local/bin/
+
+echo "**********************************************************************"
 echo "Installing Stern..."
 echo "**********************************************************************"
 curl -L -o stern.tar.gz "https://github.com/stern/stern/releases/download/v1.26.0/stern_1.26.0_linux_$ARCH.tar.gz"
@@ -76,3 +82,7 @@ fi;
 sudo tar xvzf oc.tar.gz -C /usr/local/bin/ oc
 sudo ln -s /usr/local/bin/oc /usr/bin/oc
 rm oc.tar.gz
+
+echo "**********************************************************************"
+echo "Tools Installation Complete!"
+echo "**********************************************************************"

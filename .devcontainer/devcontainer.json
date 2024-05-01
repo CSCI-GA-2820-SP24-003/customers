@@ -1,4 +1,4 @@
-// cSpell: disable
+// Spell: disable
 {
 	"name": "NYU Project",
 	"dockerComposeFile": "docker-compose.yml",
@@ -8,10 +8,19 @@
 	"customizations": {
 		"vscode": {
 			"settings": {
+				"cSpell.words": [
+					"sqlalchemy",
+					"psycopg",
+					"pytest",
+					"tekton",
+					"creds",
+					"virtualenvs"
+				],
 				"[python]": {
 					"editor.defaultFormatter": "ms-python.black-formatter",
 					"editor.formatOnSave": true
 				},
+				"git.mergeEditor": true,
 				"markdown-preview-github-styles.colorTheme": "light",
 				"makefile.extensionOutputFolder": "/tmp",
 				"python.testing.unittestEnabled": false,
@@ -44,6 +53,8 @@
 				"yzhang.markdown-all-in-one",
 				"hnw.vscode-auto-open-markdown-preview",
 				"davidanson.vscode-markdownlint",
+				"bierner.github-markdown-preview",
+				"hnw.vscode-auto-open-markdown-preview",
 				"bierner.markdown-preview-github-styles",
 				"tamasfe.even-better-toml",
 				"donjayamanne.githistory",
@@ -64,6 +75,7 @@
 			]
 		}
 	},
+	// "forwardPorts": [8080],
 	"postCreateCommand": "bash /app/.devcontainer/scripts/post-install.sh",
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
