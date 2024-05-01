@@ -15,11 +15,51 @@ The Customer Store Service is a REST API designed to manage the inventory of cus
 
 This project contains the instructions and code for Customers microservice. The `/service` folder contains our `models.py` file for our model and a `routes.py` file for our service. The `/tests` folder has test case code for testing the model and the service separately.
 
+## CD Deployment
+
+
+- In order to create the cluster run
+  ```
+  make cluster
+  ```
+- To delete a cluster run
+  ```
+  make cluster-rm
+
+- Docker:
+   ```
+   docker build -t customers:1.0 .
+   docker tag customers:1.0 cluster-registry:32000/customers:1.0
+   sudo sh -c "echo '127.0.0.1  cluster-registry' >> /etc/hosts"
+   docker push cluster-registry:32000/customers:2.0
+   ```
+- Kubectl:
+   ```
+   kubectl apply -f k8s
+   curl -i localhost:8080
+   ```
+
+- To check the logs of a specific container/service run:
+   ```
+   kc logs <service-name>
+   ```
+- To delete the service, ingress and deployment run:
+  ```
+  kc delete deploy,svc,ing <service-name>
+  ```
+
 ## Local Run of the Service
+
+Use command `flask db-create` to reset database/model.
 
 Use command `flask run` to run the service.
 
-Use command `maketest` to run the tests.
+Use command `make test` to run the tests.
+
+Use command `make lint` to run linter.
+
+Use command `behave` to run bdd.
+
 
 ## Database Schema
 
@@ -334,6 +374,12 @@ tests/                     - test cases package
 ├── test_cli_commands.py   - test suite for the CLI
 ├── test_models.py         - test suite for business models
 └── test_routes.py         - test suite for service routes
+
+features/                   
+├── steps                  
+├── customers.feature       
+   ├── customer_steps.py   
+   └── web_steps.py        
 ```
 
 ## License
