@@ -32,8 +32,8 @@ spec:
           value: $(params.GIT_REF)
         - name: refspec
           value: ''
-        # - name: submodules
-        #   value: 'false'
+        - name: submodules
+          value: 'false'
         - name: depth
           value: '1'
         - name: sslVerify
