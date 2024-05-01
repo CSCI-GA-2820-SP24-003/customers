@@ -38,14 +38,6 @@ spec:
               secretKeyRef:
                 name: postgres-creds
                 key: database_uri
-          #- name: PORT
-          #  value: "8080"
-          #- name: FLASK_APP
-          #  value: wsgi:app
-          #- name: FLASK_DEBUG
-          #  value: "True"
-          #- name: GUNICORN_BIND
-          #  value: "0.0.0.0:8080"
         readinessProbe:
           initialDelaySeconds: 5
           periodSeconds: 30

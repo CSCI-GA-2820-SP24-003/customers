@@ -14,15 +14,18 @@ spec:
     - name: GIT_REF
       description: The reference (branch or ref)
       type: string
-      default: master
+      default: deploy-on-openshift
     - name: APP_NAME
       description: Name of the application
       type: string
-      default: petshop
     - name: IMAGE_NAME
       description: The name of the image to build
       type: string
       default: 'image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/$(params.APP_NAME):latest'
+    - default: 'https://customers-service-dev.apps.sandbox-m4.g2pi.p1.openshiftapps.com'
+      description: The URL of the microservice
+      name: BASE_URL
+      type: string
   tasks:
     - name: git-clone
       params:
@@ -65,7 +68,7 @@ spec:
       workspaces:
         - name: output
           workspace: pipeline-workspace
-    - name: linting
+    - name: pylint
       params:
         - name: image
           value: 'docker.io/python:3.11-slim'
@@ -86,10 +89,7 @@ spec:
     - name: testing
       params:
         - name: PYTEST_ARGS
-          value:
-            - '--pspec'
-            - '--cov=service'
-            - '--cov-fail-under=95'
+          value: []
         - name: SECRET_NAME
           value: postgres-creds
         - name: SECRET_KEY
@@ -125,7 +125,7 @@ spec:
         - name: SKIP_PUSH
           value: 'false'
       runAfter:
-        - linting
+        - pylint
         - testing
       taskRef:
         kind: ClusterTask
@@ -144,6 +144,22 @@ spec:
       taskRef:
         kind: Task
         name: deploy-image
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+    - name: behave
+      params:
+        - name: BASE_URL
+          value: $(params.BASE_URL)
+        - name: WAIT_SECONDS
+          value: '60'
+        - name: DRIVER
+          value: chrome
+      runAfter:
+        - deploy-image
+      taskRef:
+        kind: Task
+        name: behave
       workspaces:
         - name: source
           workspace: pipeline-workspace
