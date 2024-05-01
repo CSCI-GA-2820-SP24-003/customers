@@ -1,5 +1,5 @@
-# The payment database should be created for you, if not here is the command:
-# psql -c "create database payment;" -U postgres
+# The customers database should be created for you, if not here is the command:
+# psql -c "create database customers;" -U postgres
 ---
 apiVersion: apps/v1
 kind: StatefulSet
