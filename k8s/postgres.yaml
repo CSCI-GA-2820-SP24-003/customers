@@ -91,7 +91,7 @@ metadata:
   name: postgres-config
 data:
   postgres_user: postgres
-  postgres_db: postgres
+  postgres_db: customers
 ---
 # This secret can also be created from the command line using environment variables
 #
