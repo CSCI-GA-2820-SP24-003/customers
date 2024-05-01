@@ -3,7 +3,7 @@
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: neodroid-dev
+  name: cd-pipeline
 spec:
   workspaces:
     - name: pipeline-workspace
