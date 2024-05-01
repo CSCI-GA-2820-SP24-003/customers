@@ -22,7 +22,7 @@ spec:
     - name: IMAGE_NAME
       description: The name of the image to build
       type: string
-      default: 'image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/$(params.APP_NAME):1.0'
+      default: 'image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/$(params.APP_NAME):latest'
   tasks:
     - name: git-clone
       params:
