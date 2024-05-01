@@ -18,7 +18,7 @@ spec:
     - name: APP_NAME
       description: Name of the application
       type: string
-      default: petshop
+      default: customers
     - name: IMAGE_NAME
       description: The name of the image to build
       type: string
@@ -33,7 +33,7 @@ spec:
         - name: refspec
           value: ''
         - name: submodules
-          value: 'true'
+          value: 'false'
         - name: depth
           value: '1'
         - name: sslVerify

@@ -13,7 +13,7 @@ from service.models import Customer, DataValidationError, db, Gender
 
 
 DATABASE_URI = os.getenv(
-    "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/cdb"
+    "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
 )
 
 

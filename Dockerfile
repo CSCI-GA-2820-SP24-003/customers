@@ -1,19 +1,21 @@
-FROM python:3.11-slim
+##################################################
+# Create production image
+##################################################
+FROM quay.io/rofrano/python:3.11-slim
 
 # Create working folder and install dependencies
 WORKDIR /app
 COPY pyproject.toml poetry.lock ./
-RUN python -m pip install poetry && \
+RUN python -m pip install --upgrade pip poetry && \
     poetry config virtualenvs.create false && \
     poetry install --without dev
 
 # Copy the application contents
-COPY wsgi.py .
-COPY service ./service
+COPY service/ ./service/
 
 # Switch to a non-root user and set file ownership
 RUN useradd --uid 1001 flask && \
-    chown -R flask:flask /app
+    chown -R flask /app
 USER flask
 
 # Expose any ports the app is expecting in the environment

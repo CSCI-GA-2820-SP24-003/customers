@@ -9,8 +9,8 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 2
-      maxUnavailable: 0
+      maxSurge: 0%
+      maxUnavailable: 50%
   selector:
     matchLabels:
       app: customers
@@ -47,8 +47,8 @@ spec:
           #- name: GUNICORN_BIND
           #  value: "0.0.0.0:8080"
         readinessProbe:
-          initialDelaySeconds: 5
-          periodSeconds: 30
+          initialDelaySeconds: 10
+          periodSeconds: 60
           httpGet:
             path: /health
             port: 8080
